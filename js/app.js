@@ -1,0 +1,786 @@
+/**
+ * FRONTEND ACADEMY - APLICACIÓN PRINCIPAL
+ * Gestión de Vistas, 4 Paletas x Modo Claro/Oscuro, Examen en Línea y Certificados
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+  // ==========================================
+  // ESTADO GLOBAL DE LA APLICACIÓN
+  // ==========================================
+  const state = {
+    currentView: 'inicio',
+    themePalette: localStorage.getItem('fa_theme_palette') || 'indigo',
+    themeMode: localStorage.getItem('fa_theme_mode') || 'dark',
+    exam: {
+      active: false,
+      technology: 'javascript',
+      technologyName: 'JavaScript',
+      questions: [],
+      currentIndex: 0,
+      userAnswers: {}, // { [questionIndex]: selectedOptionIndex }
+      totalTimeSeconds: 45 * 60, // 45 minutos
+      timeLeftSeconds: 45 * 60,
+      timerInterval: null,
+      startTime: null,
+      questionStartTimes: {},
+      isFinished: false,
+      score: 0,
+      passed: false
+    },
+    certificate: {
+      studentName: 'Alex Rivera',
+      technology: 'JavaScript',
+      score: 95,
+      credentialId: 'FA-' + Math.floor(100000 + Math.random() * 900000)
+    }
+  };
+
+  // ==========================================
+  // GESTOR DE TEMAS & PALETAS (4 PALETAS X 2 MODOS)
+  // ==========================================
+  const applyTheme = (palette, mode) => {
+    state.themePalette = palette;
+    state.themeMode = mode;
+
+    document.documentElement.setAttribute('data-theme-palette', palette);
+    document.documentElement.setAttribute('data-theme-mode', mode);
+
+    if (mode === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    localStorage.setItem('fa_theme_palette', palette);
+    localStorage.setItem('fa_theme_mode', mode);
+
+    // Actualizar icono de modo
+    const modeIcon = document.getElementById('theme-mode-icon');
+    if (modeIcon) {
+      modeIcon.textContent = mode === 'dark' ? 'light_mode' : 'dark_mode';
+    }
+
+    // Actualizar opciones activas en el dropdown de paletas
+    document.querySelectorAll('.palette-option').forEach(opt => {
+      if (opt.getAttribute('data-palette') === palette) {
+        opt.classList.add('active');
+      } else {
+        opt.classList.remove('active');
+      }
+    });
+
+    // Actualizar nombre de la paleta en el botón
+    const paletteNames = {
+      indigo: 'Índigo Clásico',
+      emerald: 'Esmeralda Cyber',
+      violet: 'Violeta Eléctrico',
+      amber: 'Ámbar Atardecer'
+    };
+    const paletteLabel = document.getElementById('current-palette-name');
+    if (paletteLabel) {
+      paletteLabel.textContent = paletteNames[palette] || 'Índigo';
+    }
+  };
+
+  // Inicializar tema guardado o por defecto
+  applyTheme(state.themePalette, state.themeMode);
+
+  // Toggle Modo Claro / Oscuro
+  const modeToggleBtn = document.getElementById('btn-toggle-mode');
+  if (modeToggleBtn) {
+    modeToggleBtn.addEventListener('click', () => {
+      const newMode = state.themeMode === 'dark' ? 'light' : 'dark';
+      applyTheme(state.themePalette, newMode);
+      showToast(`Cambiado a Modo ${newMode === 'dark' ? 'Oscuro' : 'Claro'}`);
+    });
+  }
+
+  // Toggle Dropdown de Paletas
+  const palettePickerBtn = document.getElementById('btn-palette-picker');
+  const paletteDropdown = document.getElementById('palette-dropdown');
+
+  if (palettePickerBtn && paletteDropdown) {
+    palettePickerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      paletteDropdown.classList.toggle('show');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!paletteDropdown.contains(e.target) && e.target !== palettePickerBtn) {
+        paletteDropdown.classList.remove('show');
+      }
+    });
+
+    document.querySelectorAll('.palette-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const selectedPalette = btn.getAttribute('data-palette');
+        applyTheme(selectedPalette, state.themeMode);
+        paletteDropdown.classList.remove('show');
+        showToast(`Paleta aplicada: ${btn.querySelector('span').textContent}`);
+      });
+    });
+  }
+
+  // ==========================================
+  // NAVEGACIÓN ENTRE VISTAS (ROUTING SIMPLE)
+  // ==========================================
+  const switchView = (viewName) => {
+    state.currentView = viewName;
+
+    // Ocultar todas las secciones de vista
+    document.querySelectorAll('.view-section').forEach(sec => {
+      sec.classList.remove('active-view');
+    });
+
+    // Mostrar sección correspondiente
+    const targetSection = document.getElementById(`view-${viewName}`);
+    if (targetSection) {
+      targetSection.classList.add('active-view');
+    }
+
+    // Actualizar enlaces de navegación activos
+    document.querySelectorAll('.nav-link').forEach(link => {
+      if (link.getAttribute('data-view') === viewName) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+
+    // Actualizar items de sidebar de la plataforma
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      if (item.getAttribute('data-view') === viewName) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Acciones específicas por vista
+    if (viewName === 'test' && !state.exam.active) {
+      startExam('javascript');
+    } else if (viewName === 'certificados') {
+      renderStandaloneCertificate();
+    }
+  };
+
+  // Enlaces de navegación con data-view
+  document.querySelectorAll('[data-view]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      const view = el.getAttribute('data-view');
+      if (view) {
+        switchView(view);
+      }
+    });
+  });
+
+  // Botón "Explorar Cursos" y "Empezar Evaluación"
+  const heroExploreBtn = document.getElementById('hero-explore-btn');
+  if (heroExploreBtn) {
+    heroExploreBtn.addEventListener('click', () => switchView('cursos'));
+  }
+
+  const heroStartExamBtn = document.getElementById('hero-start-exam-btn');
+  if (heroStartExamBtn) {
+    heroStartExamBtn.addEventListener('click', () => {
+      switchView('test');
+      startExam('javascript');
+    });
+  }
+
+  const benchmarkStartBtn = document.getElementById('benchmark-start-btn');
+  if (benchmarkStartBtn) {
+    benchmarkStartBtn.addEventListener('click', () => {
+      switchView('test');
+      startExam('javascript');
+    });
+  }
+
+  // ==========================================
+  // RENDERIZADO DE LOS 6 CURSOS
+  // ==========================================
+  const renderCourses = (filter = 'todos') => {
+    const grid = document.getElementById('courses-grid-container');
+    if (!grid) return;
+
+    let filtered = COURSES_DATA;
+    if (filter !== 'todos') {
+      filtered = COURSES_DATA.filter(c => c.category.toLowerCase().includes(filter.toLowerCase()));
+    }
+
+    grid.innerHTML = filtered.map(course => `
+      <div class="course-card">
+        <div class="course-header-meta">
+          <div class="course-icon-badge">
+            <span class="material-symbols-outlined">${course.icon}</span>
+          </div>
+          <span class="course-tag">${course.badge}</span>
+        </div>
+        <span style="font-size:12px; font-weight:700; color:var(--accent-primary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px; display:block;">${course.level}</span>
+        <h3 class="course-title">${course.title}</h3>
+        <p class="course-desc">${course.shortDesc}</p>
+        
+        <div class="course-meta-footer">
+          <div style="display:flex; align-items:center; gap:4px;">
+            <span class="material-symbols-outlined" style="font-size:16px;">schedule</span>
+            <span>${course.duration}</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:4px; color:var(--warning);">
+            <span class="material-symbols-outlined" style="font-size:16px;">star</span>
+            <span style="color:var(--text-primary); font-weight:600;">${course.rating}</span>
+          </div>
+        </div>
+
+        <div class="course-actions-row">
+          <button class="btn btn-outline btn-sm" style="flex:1;" onclick="openCourseModal('${course.id}')">
+            <span class="material-symbols-outlined" style="font-size:16px;">menu_book</span>
+            Ver Programa
+          </button>
+          ${course.hasExam ? `
+            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="launchExamFromCourse('${course.id}')">
+              <span class="material-symbols-outlined" style="font-size:16px;">quiz</span>
+              Rendir Prueba
+            </button>
+          ` : `
+            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="showToast('Inscripción abierta para el próximo ciclo')">
+              <span class="material-symbols-outlined" style="font-size:16px;">how_to_reg</span>
+              Inscribirse
+            </button>
+          `}
+        </div>
+      </div>
+    `).join('');
+  };
+
+  renderCourses();
+
+  // Filtros de cursos
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const filter = tab.getAttribute('data-filter') || 'todos';
+      renderCourses(filter);
+    });
+  });
+
+  // Modal de Detalle de Curso
+  window.openCourseModal = (courseId) => {
+    const course = COURSES_DATA.find(c => c.id === courseId);
+    if (!course) return;
+
+    const modalTitle = document.getElementById('course-modal-title');
+    const modalBody = document.getElementById('course-modal-content');
+    const modal = document.getElementById('course-detail-modal');
+
+    if (modalTitle && modalBody && modal) {
+      modalTitle.textContent = course.title;
+      modalBody.innerHTML = `
+        <div style="margin-bottom:20px;">
+          <p style="font-size:16px; color:var(--text-secondary); margin-bottom:16px;">${course.shortDesc}</p>
+          <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:20px; font-size:13px;">
+            <div style="padding:6px 12px; background:var(--bg-surface-elevated); border-radius:var(--radius-sm);"><strong>Nivel:</strong> ${course.level}</div>
+            <div style="padding:6px 12px; background:var(--bg-surface-elevated); border-radius:var(--radius-sm);"><strong>Duración:</strong> ${course.duration}</div>
+            <div style="padding:6px 12px; background:var(--bg-surface-elevated); border-radius:var(--radius-sm);"><strong>Estudiantes:</strong> ${course.students}</div>
+          </div>
+        </div>
+
+        <h4 style="font-size:16px; font-weight:700; margin-bottom:12px; color:var(--text-primary);">Módulos del Programa Académico:</h4>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:24px;">
+          ${course.modules.map((m, idx) => `
+            <li style="display:flex; align-items:center; gap:10px; font-size:14px; color:var(--text-primary); background:var(--bg-surface-elevated); padding:10px 14px; border-radius:var(--radius-md);">
+              <span style="width:24px; height:24px; border-radius:50%; background:var(--accent-primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;">${idx + 1}</span>
+              ${m}
+            </li>
+          `).join('')}
+        </ul>
+
+        <div style="display:flex; justify-content:flex-end; gap:12px; border-top:1px solid var(--border-subtle); padding-top:16px;">
+          <button class="btn btn-outline" onclick="closeModal('course-detail-modal')">Cerrar</button>
+          ${course.hasExam ? `
+            <button class="btn btn-primary" onclick="closeModal('course-detail-modal'); launchExamFromCourse('${course.id}')">
+              <span class="material-symbols-outlined">quiz</span>
+              Iniciar Prueba en Línea
+            </button>
+          ` : `
+            <button class="btn btn-primary" onclick="closeModal('course-detail-modal'); showToast('¡Solicitud de inscripción recibida con éxito!')">
+              <span class="material-symbols-outlined">check_circle</span>
+              Solicitar Cupo
+            </button>
+          `}
+        </div>
+      `;
+      modal.classList.add('show');
+    }
+  };
+
+  window.launchExamFromCourse = (tech) => {
+    switchView('test');
+    startExam(tech);
+  };
+
+  // ==========================================
+  // MOTOR DE EVALUACIÓN / PRUEBA EN LÍNEA
+  // ==========================================
+  const startExam = (tech = 'javascript') => {
+    const techMap = {
+      javascript: 'JavaScript',
+      html: 'HTML',
+      css: 'CSS'
+    };
+
+    const techKey = tech.toLowerCase();
+    const questions = getRandomQuestions(techKey, 10);
+
+    state.exam = {
+      active: true,
+      technology: techKey,
+      technologyName: techMap[techKey] || 'JavaScript',
+      questions: questions,
+      currentIndex: 0,
+      userAnswers: {},
+      totalTimeSeconds: 45 * 60,
+      timeLeftSeconds: 45 * 60,
+      timerInterval: null,
+      startTime: Date.now(),
+      questionStartTimes: {},
+      isFinished: false,
+      score: 0,
+      passed: false
+    };
+
+    // Actualizar selector activo de tecnología
+    document.querySelectorAll('.tech-select-pill').forEach(pill => {
+      if (pill.getAttribute('data-tech') === techKey) {
+        pill.classList.add('active');
+      } else {
+        pill.classList.remove('active');
+      }
+    });
+
+    // Actualizar títulos de la plataforma
+    const examSubtitle = document.getElementById('exam-tech-subtitle');
+    if (examSubtitle) {
+      examSubtitle.textContent = `Evaluación Oficial de ${state.exam.technologyName}`;
+    }
+
+    // Iniciar Temporizador
+    if (state.exam.timerInterval) {
+      clearInterval(state.exam.timerInterval);
+    }
+    updateTimerDisplay();
+    state.exam.timerInterval = setInterval(() => {
+      if (state.exam.timeLeftSeconds > 0) {
+        state.exam.timeLeftSeconds--;
+        updateTimerDisplay();
+      } else {
+        clearInterval(state.exam.timerInterval);
+        finishExam(true); // Auto submit por tiempo agotado
+      }
+    }, 1000);
+
+    renderCurrentQuestion();
+    updateTrajectoryMetrics();
+  };
+
+  // Actualizar visualización del Temporizador
+  const updateTimerDisplay = () => {
+    const timerEl = document.getElementById('exam-timer-val');
+    const timerPill = document.getElementById('exam-timer-pill');
+    if (!timerEl) return;
+
+    const mins = Math.floor(state.exam.timeLeftSeconds / 60);
+    const secs = state.exam.timeLeftSeconds % 60;
+    timerEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+    if (state.exam.timeLeftSeconds <= 300) {
+      timerPill?.classList.add('timer-urgent');
+    } else {
+      timerPill?.classList.remove('timer-urgent');
+    }
+  };
+
+  // Renderizar Pregunta Actual
+  const renderCurrentQuestion = () => {
+    const { questions, currentIndex, userAnswers } = state.exam;
+    const currentQ = questions[currentIndex];
+    if (!currentQ) return;
+
+    // Actualizar Stepper & Progreso
+    const stepperLabel = document.getElementById('stepper-current-label');
+    const stepperPercent = document.getElementById('stepper-percent-label');
+    const stepperFill = document.getElementById('stepper-progress-fill');
+
+    const progressPercentage = Math.round(((currentIndex + 1) / questions.length) * 100);
+
+    if (stepperLabel) stepperLabel.textContent = `Pregunta ${currentIndex + 1} de ${questions.length}`;
+    if (stepperPercent) stepperPercent.textContent = `${progressPercentage}% Completado`;
+    if (stepperFill) stepperFill.style.width = `${progressPercentage}%`;
+
+    // Renderizar Texto de la Pregunta
+    const questionTextEl = document.getElementById('quiz-question-title');
+    if (questionTextEl) {
+      questionTextEl.textContent = currentQ.question;
+    }
+
+    // Renderizar Opciones
+    const optionsContainer = document.getElementById('quiz-options-container');
+    if (optionsContainer) {
+      const selectedOption = userAnswers[currentIndex];
+      optionsContainer.innerHTML = currentQ.options.map((opt, idx) => `
+        <div class="option-label ${selectedOption === idx ? 'selected' : ''}" onclick="selectExamOption(${idx})">
+          <div class="option-check-circle">
+            <span class="material-symbols-outlined" style="font-size:16px;">${selectedOption === idx ? 'check' : ''}</span>
+          </div>
+          <div class="option-text">${opt}</div>
+        </div>
+      `).join('');
+    }
+
+    // Actualizar Botón Anterior
+    const prevBtn = document.getElementById('exam-prev-btn');
+    if (prevBtn) {
+      prevBtn.disabled = currentIndex === 0;
+      prevBtn.style.opacity = currentIndex === 0 ? '0.4' : '1';
+      prevBtn.style.pointerEvents = currentIndex === 0 ? 'none' : 'auto';
+    }
+
+    // Actualizar Botón Siguiente / Finalizar
+    const nextBtn = document.getElementById('exam-next-btn');
+    if (nextBtn) {
+      if (currentIndex === questions.length - 1) {
+        nextBtn.innerHTML = `Finalizar Examen <span class="material-symbols-outlined" style="font-size:18px;">task_alt</span>`;
+      } else {
+        nextBtn.innerHTML = `Siguiente <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>`;
+      }
+    }
+  };
+
+  // Selección de opción por el usuario
+  window.selectExamOption = (optionIndex) => {
+    state.exam.userAnswers[state.exam.currentIndex] = optionIndex;
+    renderCurrentQuestion();
+    updateTrajectoryMetrics();
+  };
+
+  // Botón Siguiente
+  const nextBtn = document.getElementById('exam-next-btn');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      const { questions, currentIndex, userAnswers } = state.exam;
+
+      if (userAnswers[currentIndex] === undefined) {
+        showToast('Por favor selecciona una respuesta antes de continuar');
+        return;
+      }
+
+      if (currentIndex < questions.length - 1) {
+        state.exam.currentIndex++;
+        renderCurrentQuestion();
+        updateTrajectoryMetrics();
+      } else {
+        // Finalizar examen
+        finishExam(false);
+      }
+    });
+  }
+
+  // Botón Anterior
+  const prevBtn = document.getElementById('exam-prev-btn');
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      if (state.exam.currentIndex > 0) {
+        state.exam.currentIndex--;
+        renderCurrentQuestion();
+        updateTrajectoryMetrics();
+      }
+    });
+  }
+
+  // Actualizar métricas de Trayectoria en Vivo
+  const updateTrajectoryMetrics = () => {
+    const { questions, userAnswers, totalTimeSeconds, timeLeftSeconds } = state.exam;
+    const answeredCount = Object.keys(userAnswers).length;
+
+    // Calcular puntaje estimado actual
+    let correctSoFar = 0;
+    Object.entries(userAnswers).forEach(([qIdx, answerIdx]) => {
+      const q = questions[parseInt(qIdx, 10)];
+      if (q && q.correctAnswer === answerIdx) {
+        correctSoFar++;
+      }
+    });
+
+    const predictedScore = answeredCount > 0
+      ? Math.round((correctSoFar / answeredCount) * 100)
+      : 90;
+
+    const predictedScoreEl = document.getElementById('trajectory-predicted-score');
+    if (predictedScoreEl) {
+      predictedScoreEl.textContent = `${predictedScore}`;
+    }
+
+    // Calcular ritmo
+    const elapsedSeconds = totalTimeSeconds - timeLeftSeconds;
+    const paceSeconds = answeredCount > 0 ? Math.round(elapsedSeconds / answeredCount) : 45;
+    const paceMins = Math.floor(paceSeconds / 60);
+    const paceSecs = paceSeconds % 60;
+
+    const paceEl = document.getElementById('trajectory-pace-val');
+    if (paceEl) {
+      paceEl.textContent = paceMins > 0
+        ? `${paceMins}m ${paceSecs}s / pregunta`
+        : `${paceSecs}s / pregunta`;
+    }
+
+    // Indicador de estado
+    const statusEl = document.getElementById('trajectory-status-indicator');
+    if (statusEl) {
+      if (predictedScore >= 80) {
+        statusEl.textContent = 'En Camino de Aprobación';
+        statusEl.style.color = 'var(--success)';
+      } else {
+        statusEl.textContent = 'Necesita Refuerzo (<80%)';
+        statusEl.style.color = 'var(--warning)';
+      }
+    }
+  };
+
+  // Selector de Tecnología en el examen
+  document.querySelectorAll('.tech-select-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const tech = pill.getAttribute('data-tech');
+      if (tech && tech !== state.exam.technology) {
+        startExam(tech);
+        showToast(`Iniciando prueba de ${tech.toUpperCase()} con 10 preguntas nuevas`);
+      }
+    });
+  });
+
+  // Finalizar Examen y Mostrar Resultados
+  const finishExam = (autoSubmitted = false) => {
+    if (state.exam.timerInterval) {
+      clearInterval(state.exam.timerInterval);
+    }
+    state.exam.isFinished = true;
+
+    // Calcular puntaje final
+    let correctTotal = 0;
+    state.exam.questions.forEach((q, idx) => {
+      if (state.exam.userAnswers[idx] === q.correctAnswer) {
+        correctTotal++;
+      }
+    });
+
+    const finalScore = Math.round((correctTotal / state.exam.questions.length) * 100);
+    const passed = finalScore >= 80;
+
+    state.exam.score = finalScore;
+    state.exam.passed = passed;
+
+    // Actualizar estado del certificado
+    state.certificate.technology = state.exam.technologyName;
+    state.certificate.score = finalScore;
+
+    // Abrir modal de resultados
+    openResultsModal(finalScore, correctTotal, state.exam.questions.length, passed, autoSubmitted);
+  };
+
+  // ==========================================
+  // MODAL DE RESULTADOS Y GENERACIÓN DE CERTIFICADO
+  // ==========================================
+  const openResultsModal = (score, correct, total, passed, autoSubmitted) => {
+    const modal = document.getElementById('results-certificate-modal');
+    if (!modal) return;
+
+    const scoreBadge = document.getElementById('results-score-badge');
+    const titleEl = document.getElementById('results-main-title');
+    const descEl = document.getElementById('results-desc-text');
+    const studentInput = document.getElementById('cert-student-name-input');
+
+    if (studentInput) {
+      studentInput.value = state.certificate.studentName;
+    }
+
+    if (scoreBadge) {
+      scoreBadge.className = `results-score-badge ${passed ? 'passed' : 'failed'}`;
+      scoreBadge.innerHTML = `
+        <span class="material-symbols-outlined">${passed ? 'verified' : 'cancel'}</span>
+        ${score}% Calificación Final (${correct}/${total} Correctas)
+      `;
+    }
+
+    if (titleEl) {
+      titleEl.textContent = passed
+        ? '¡Felicitaciones! Has Aprobado la Certificación'
+        : 'Examen Finalizado - Requiere Repaso';
+    }
+
+    if (descEl) {
+      descEl.textContent = passed
+        ? `Has demostrado un dominio sólido en ${state.exam.technologyName}. Personaliza tu nombre a continuación y descarga tu certificado oficial para compartir en tus redes.`
+        : `Obtuviste un ${score}%, el puntaje mínimo de acreditación es 80%. Puedes revisar los módulos del curso y volver a intentarlo en cualquier momento.`;
+    }
+
+    // Dibujar Certificado en el Canvas
+    renderCertificateToCanvas();
+
+    modal.classList.add('show');
+  };
+
+  // Renderizar certificado en Canvas en vivo
+  const renderCertificateToCanvas = () => {
+    const canvas = document.getElementById('certificate-canvas');
+    if (!canvas) return;
+
+    const studentNameInput = document.getElementById('cert-student-name-input');
+    const currentName = studentNameInput ? studentNameInput.value.trim() || 'Frontend Developer' : state.certificate.studentName;
+    state.certificate.studentName = currentName;
+
+    CertificateEngine.drawCertificate(canvas, {
+      studentName: currentName,
+      technology: state.certificate.technology,
+      score: state.certificate.score,
+      credentialId: state.certificate.credentialId,
+      themeColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim()
+    });
+  };
+
+  // Re-dibujar al escribir el nombre en vivo
+  const studentNameInput = document.getElementById('cert-student-name-input');
+  if (studentNameInput) {
+    studentNameInput.addEventListener('input', () => {
+      renderCertificateToCanvas();
+    });
+  }
+
+  // Botón Descargar PNG
+  const btnDownloadPNG = document.getElementById('btn-download-cert-png');
+  if (btnDownloadPNG) {
+    btnDownloadPNG.addEventListener('click', () => {
+      const canvas = document.getElementById('certificate-canvas');
+      if (canvas) {
+        const cleanName = state.certificate.studentName.replace(/\s+/g, '_');
+        CertificateEngine.downloadPNG(canvas, `Certificado_${state.certificate.technology}_${cleanName}.png`);
+        showToast('¡Certificado PNG descargado en alta resolución!');
+      }
+    });
+  }
+
+  // Botón Descargar JPG
+  const btnDownloadJPG = document.getElementById('btn-download-cert-jpg');
+  if (btnDownloadJPG) {
+    btnDownloadJPG.addEventListener('click', () => {
+      const canvas = document.getElementById('certificate-canvas');
+      if (canvas) {
+        const cleanName = state.certificate.studentName.replace(/\s+/g, '_');
+        CertificateEngine.downloadJPG(canvas, `Certificado_${state.certificate.technology}_${cleanName}.jpg`);
+        showToast('¡Certificado JPG descargado en alta resolución!');
+      }
+    });
+  }
+
+  // Descargar muestra desde la tarjeta de Reward
+  const downloadSampleBtn = document.getElementById('download-sample-reward-btn');
+  if (downloadSampleBtn) {
+    downloadSampleBtn.addEventListener('click', () => {
+      state.certificate.studentName = 'Alex Rivera';
+      state.certificate.technology = state.exam.technologyName || 'JavaScript';
+      state.certificate.score = 95;
+      openResultsModal(95, 10, 10, true, false);
+    });
+  }
+
+  // Renderizado de Certificado Autónomo en la vista de Certificados
+  const renderStandaloneCertificate = () => {
+    state.certificate.studentName = state.certificate.studentName || 'Alex Rivera';
+    state.certificate.technology = 'JavaScript & Frontend Architecture';
+    state.certificate.score = 98;
+    renderCertificateToCanvas();
+  };
+
+  // Compartir en Redes Sociales
+  const shareLinkedInBtn = document.getElementById('share-linkedin-btn');
+  if (shareLinkedInBtn) {
+    shareLinkedInBtn.addEventListener('click', () => {
+      const text = encodeURIComponent(`¡Acabo de certificar mis habilidades en ${state.certificate.technology} con un puntaje de ${state.certificate.score}% en Frontend Academy! 🚀📜 #frontend #javascript #webdev #frontendacademy`);
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://frontendacademy.org')}&summary=${text}`, '_blank');
+    });
+  }
+
+  const shareTwitterBtn = document.getElementById('share-twitter-btn');
+  if (shareTwitterBtn) {
+    shareTwitterBtn.addEventListener('click', () => {
+      const text = encodeURIComponent(`¡Aprobé la evaluación de ${state.certificate.technology} en @FrontendAcademy con ${state.certificate.score}%! 🎓💻 Aquí mi certificado oficial:`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent('https://frontendacademy.org/verify/' + state.certificate.credentialId)}`, '_blank');
+    });
+  }
+
+  const shareWhatsAppBtn = document.getElementById('share-whatsapp-btn');
+  if (shareWhatsAppBtn) {
+    shareWhatsAppBtn.addEventListener('click', () => {
+      const text = encodeURIComponent(`¡Hola! Completé la certificación en ${state.certificate.technology} en Frontend Academy con ${state.certificate.score}% de calificación. Credencial: ${state.certificate.credentialId}`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    });
+  }
+
+  const copyCertLinkBtn = document.getElementById('copy-cert-link-btn');
+  if (copyCertLinkBtn) {
+    copyCertLinkBtn.addEventListener('click', () => {
+      const link = `https://frontendacademy.org/verify/${state.certificate.credentialId}`;
+      navigator.clipboard.writeText(link).then(() => {
+        showToast('¡Enlace de verificación copiado al portapapeles!');
+      }).catch(() => {
+        showToast('Enlace: ' + link);
+      });
+    });
+  }
+
+  // ==========================================
+  // HELPER MODAL & TOAST
+  // ==========================================
+  window.closeModal = (modalId) => {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.remove('show');
+    }
+  };
+
+  // Cerrar modales con clic fuera
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.classList.remove('show');
+      }
+    });
+  });
+
+  // Cerrar con Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+    }
+  });
+
+  // Notificación Toast
+  const showToast = (message) => {
+    let toast = document.getElementById('app-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'app-toast';
+      toast.className = 'toast-msg';
+      document.body.appendChild(toast);
+    }
+    toast.innerHTML = `
+      <span class="material-symbols-outlined" style="color:var(--accent-primary); font-size:20px;">info</span>
+      <span>${message}</span>
+    `;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3500);
+  };
+});

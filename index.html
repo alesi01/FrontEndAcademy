@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="es" data-theme-palette="indigo" data-theme-mode="dark" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frontend Academy - Educación Avanzada para Desarrolladores Frontend</title>
+  <meta name="description" content="Academia online líder para desarrolladores frontend. Cursos avanzados de JavaScript, HTML, CSS, Bases de datos SQL/NoSQL y Metodologías Ágiles. Prueba en línea y certificación oficial." />
+
+  <!-- Google Fonts & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <!-- Estilos del Sistema de Diseño -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ==========================================================================
+       CABECERA GLOBAL / NAVEGACIÓN
+       ========================================================================== -->
+  <header class="app-header">
+    <div class="header-container">
+      <!-- Logo de la Academia -->
+      <div class="brand-logo" data-view="inicio">
+        <div class="logo-icon-wrap">
+          <svg class="logo-svg" viewBox="0 0 24 24">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            <line x1="9" y1="7" x2="15" y2="7"></line>
+            <line x1="9" y1="11" x2="13" y2="11"></line>
+          </svg>
+        </div>
+        <div class="brand-name">
+          Frontend <span>Academy</span>
+        </div>
+      </div>
+
+      <!-- Enlaces de Navegación Principal -->
+      <ul class="nav-links">
+        <li><a href="#inicio" class="nav-link active" data-view="inicio">Inicio</a></li>
+        <li><a href="#cursos" class="nav-link" data-view="cursos">Cursos</a></li>
+        <li><a href="#test" class="nav-link" data-view="test">Prueba en Línea</a></li>
+        <li><a href="#certificados" class="nav-link" data-view="certificados">Certificados</a></li>
+      </ul>
+
+      <!-- Acciones de Cabecera y Selector de Temas -->
+      <div class="header-actions">
+        <!-- Widget de Personalización de Temas (4 Paletas x Claro/Oscuro) -->
+        <div class="theme-controls-widget">
+          <button class="palette-picker-btn" id="btn-palette-picker" title="Elegir Paleta de Color">
+            <div class="palette-dots">
+              <span class="palette-dot dot-indigo"></span>
+              <span class="palette-dot dot-emerald"></span>
+              <span class="palette-dot dot-violet"></span>
+              <span class="palette-dot dot-amber"></span>
+            </div>
+            <span id="current-palette-name" style="margin-left:4px;">Paleta</span>
+            <span class="material-symbols-outlined" style="font-size:16px;">expand_more</span>
+          </button>
+
+          <button class="theme-mode-toggle" id="btn-toggle-mode" title="Cambiar Modo Claro/Oscuro">
+            <span class="material-symbols-outlined" id="theme-mode-icon" style="font-size:18px;">light_mode</span>
+          </button>
+        </div>
+
+        <!-- Menú Desplegable de las 4 Paletas -->
+        <div class="palette-dropdown" id="palette-dropdown">
+          <div class="palette-title">Paletas de Colores (4 Estilos)</div>
+          <button class="palette-option active" data-palette="indigo">
+            <span>Índigo Clásico</span>
+            <div class="palette-swatch" style="background:#4f46e5;"></div>
+          </button>
+          <button class="palette-option" data-palette="emerald">
+            <span>Esmeralda Cyber</span>
+            <div class="palette-swatch" style="background:#10b981;"></div>
+          </button>
+          <button class="palette-option" data-palette="violet">
+            <span>Violeta Eléctrico</span>
+            <div class="palette-swatch" style="background:#a855f7;"></div>
+          </button>
+          <button class="palette-option" data-palette="amber">
+            <span>Ámbar Atardecer</span>
+            <div class="palette-swatch" style="background:#f59e0b;"></div>
+          </button>
+        </div>
+
+        <button class="btn btn-ghost btn-sm" onclick="showToast('Sesión de demostración iniciada como Alumno')">Ingresar</button>
+        <button class="btn btn-primary btn-sm" data-view="test">Comenzar Test</button>
+        <div class="user-avatar-pill" title="Estudiante Acreditado">AR</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       VISTA 1: INICIO / LANDING PAGE (DISEÑO SEGÚN IMAGEN 1)
+       ========================================================================== -->
+  <main id="view-inicio" class="view-section active-view">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-gradient-backdrop"></div>
+      <div class="container">
+        <!-- Badge -->
+        <div class="badge-pill">
+          <span class="material-symbols-outlined" style="font-size:16px;">school</span>
+          <span>EDUCACIÓN DE NIVEL PROFESIONAL</span>
+        </div>
+
+        <!-- Título Principal -->
+        <h1 class="hero-title">
+          Educación Avanzada para <span class="hero-highlight">Profesionales Frontend
+            <svg viewBox="0 0 100 10" preserveAspectRatio="none">
+              <path d="M0 5 Q 50 10 100 5" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+            </svg>
+          </span>
+        </h1>
+
+        <!-- Subtítulo -->
+        <p class="hero-desc">
+          Domina la arquitectura web moderna, optimización de rendimiento, bases de datos y sistemas de diseño escalables con especialistas líderes en la industria tecnológica.
+        </p>
+
+        <!-- CTAs -->
+        <div class="hero-cta-group">
+          <button class="btn btn-primary btn-lg" id="hero-explore-btn">
+            Explorar Especializaciones
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+          <button class="btn btn-outline btn-lg" id="hero-start-exam-btn">
+            <span class="material-symbols-outlined">quiz</span>
+            Rendir Prueba en Línea
+          </button>
+        </div>
+
+        <!-- Barra de Estadísticas -->
+        <div class="stats-bar">
+          <div class="stat-item">
+            <div class="stat-number">15k+</div>
+            <div class="stat-label">Graduados</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Tasa de Finalización</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">4.9/5</div>
+            <div class="stat-label">Calificación Promedio</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Empresas Aliadas</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección: Especializaciones y Cursos de la Academia -->
+    <section class="tracks-section" id="section-courses-preview">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Especializaciones & Cursos</h2>
+            <p class="section-subtitle">Trayectorias de aprendizaje estructuradas para desarrolladores frontend modernos y arquitectos web.</p>
+          </div>
+          <button class="btn btn-outline btn-sm" data-view="cursos">
+            Ver Todos los Cursos
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+
+        <!-- Filtros de Categoría -->
+        <div class="courses-filter-tabs">
+          <button class="filter-tab active" data-filter="todos">Todos los Cursos (6)</button>
+          <button class="filter-tab" data-filter="Lenguajes">Lenguajes</button>
+          <button class="filter-tab" data-filter="Estructura">Estructura & a11y</button>
+          <button class="filter-tab" data-filter="Estilos">Estilos & CSS</button>
+          <button class="filter-tab" data-filter="Data">Bases de Datos</button>
+          <button class="filter-tab" data-filter="Gestión">Metodologías Ágiles</button>
+        </div>
+
+        <!-- Grid de los 6 Cursos -->
+        <div class="courses-grid" id="courses-grid-container">
+          <!-- Generado dinámicamente por JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección: Evalúa Tu Nivel Técnico (Benchmark Your Expertise) -->
+    <section class="benchmark-section">
+      <div class="container">
+        <div class="benchmark-split">
+          <!-- Columna Izquierda: Imagen y Floating Badge -->
+          <div class="benchmark-media">
+            <div class="benchmark-image-card" style="background-image: url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1000&q=80');">
+              <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%);"></div>
+            </div>
+
+            <!-- Floating Badge "Skill Verified" -->
+            <div class="skill-verified-floating-badge">
+              <div class="floating-badge-top">
+                <div class="floating-badge-icon">
+                  <span class="material-symbols-outlined" style="font-size:20px;">assignment_turned_in</span>
+                </div>
+                <div>
+                  <h4 style="font-size:14px; font-weight:700; color:var(--text-primary);">Habilidad Verificada</h4>
+                  <span style="font-size:12px; font-weight:700; color:var(--accent-primary);">Evaluación Aprobada</span>
+                </div>
+              </div>
+              <div class="progress-mini-bar">
+                <div class="progress-mini-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Contenido y CTA -->
+          <div class="benchmark-content">
+            <div class="badge-pill">EVALUACIÓN DE HABILIDADES</div>
+            <h2 class="benchmark-title">Mide y Certifica tu Nivel Técnico.</h2>
+            <p class="benchmark-desc">
+              ¿Quieres conocer tu nivel actual o validar tus conocimientos? Realiza nuestra prueba en línea gratuita de 10 preguntas aleatorias en HTML, CSS o JavaScript y obtén tu certificado descargable en PNG/JPG.
+            </p>
+
+            <ul class="feature-check-list">
+              <li class="feature-check-item">
+                <span class="material-symbols-outlined feature-check-icon">check_circle</span>
+                <div>
+                  <div class="feature-title">Banco de Preguntas Aleatorio</div>
+                  <div class="feature-desc">Cada examen selecciona 10 preguntas únicas para evaluar escenarios reales y código.</div>
+                </div>
+              </li>
+              <li class="feature-check-item">
+                <span class="material-symbols-outlined feature-check-icon">check_circle</span>
+                <div>
+                  <div class="feature-title">Certificado Oficial Descargable</div>
+                  <div class="feature-desc">Descarga tu acreditación con ID único de verificación en alta resolución en JPG o PNG.</div>
+                </div>
+              </li>
+              <li class="feature-check-item">
+                <span class="material-symbols-outlined feature-check-icon">check_circle</span>
+                <div>
+                  <div class="feature-title">Métricas de Rendimiento en Vivo</div>
+                  <div class="feature-desc">Seguimiento en tiempo real de tu ritmo por pregunta y puntaje estimado de aprobación.</div>
+                </div>
+              </li>
+            </ul>
+
+            <button class="btn btn-primary btn-lg" id="benchmark-start-btn">
+              <span class="material-symbols-outlined">quiz</span>
+              Iniciar Prueba Gratuita
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Oficial -->
+    <footer class="app-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand-col">
+            <div class="brand-logo">
+              <div class="logo-icon-wrap">
+                <svg class="logo-svg" viewBox="0 0 24 24">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+              </div>
+              <div class="brand-name">
+                Frontend <span>Academy</span>
+              </div>
+            </div>
+            <p>La plataforma educativa líder para profesionales del desarrollo web y frontend engineering en Latinoamérica y el mundo.</p>
+          </div>
+
+          <div>
+            <div class="footer-col-title">Plataforma</div>
+            <ul class="footer-links">
+              <li><a href="#cursos" class="footer-link" data-view="cursos">Catálogo de Cursos</a></li>
+              <li><a href="#test" class="footer-link" data-view="test">Pruebas en Línea</a></li>
+              <li><a href="#certificados" class="footer-link" data-view="certificados">Validar Certificados</a></li>
+              <li><a href="#" class="footer-link" onclick="showToast('Rutas de especialización actualizadas')">Rutas de Carrera</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="footer-col-title">Compañía</div>
+            <ul class="footer-links">
+              <li><a href="#" class="footer-link" onclick="showToast('Frontend Academy - Formando líderes')">Sobre Nosotros</a></li>
+              <li><a href="#" class="footer-link" onclick="showToast('Búsquedas abiertas para instructores')">Docentes</a></li>
+              <li><a href="#" class="footer-link" onclick="showToast('Alianzas activas con más de 50 empresas')">Empresas</a></li>
+              <li><a href="#" class="footer-link" onclick="showToast('Contacto: contacto@frontendacademy.org')">Contacto</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="footer-col-title">Legal & Soporte</div>
+            <ul class="footer-links">
+              <li><a href="#" class="footer-link" onclick="showToast('Términos y condiciones vigentes')">Términos de Servicio</a></li>
+              <li><a href="#" class="footer-link" onclick="showToast('Política de privacidad protegida')">Privacidad</a></li>
+              <li><a href="#" class="footer-link" onclick="showToast('Centro de ayuda 24/7 disponible')">Centro de Ayuda</a></li>
+              <li><a href="#" class="footer-link" onclick="showToast('Acreditación institucional oficial')">Acreditaciones</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <div>© 2026 Frontend Academy Inc. Todos los derechos reservados.</div>
+          <div style="display:flex; gap:16px; align-items:center;">
+            <span class="material-symbols-outlined" style="cursor:pointer;" onclick="showToast('Idioma: Español')" title="Español">language</span>
+            <span class="material-symbols-outlined" style="cursor:pointer;" onclick="showToast('Email: soporte@frontendacademy.org')" title="Soporte">mail</span>
+            <span class="material-symbols-outlined" style="cursor:pointer;" onclick="showToast('Servidores operativos al 100%')" title="Estado del Sistema">dns</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ==========================================================================
+       VISTA 2: CATÁLOGO DETALLADO DE CURSOS
+       ========================================================================== -->
+  <section id="view-cursos" class="view-section">
+    <div class="container" style="padding-top:40px; padding-bottom:80px;">
+      <div class="section-header">
+        <div>
+          <div class="badge-pill">PROGRAMAS ACADÉMICOS</div>
+          <h1 class="section-title">Catálogo Completo de Cursos</h1>
+          <p class="section-subtitle">Descubre nuestros 6 programas especializados diseñados para llevar tu perfil técnico al siguiente nivel.</p>
+        </div>
+      </div>
+
+      <div class="courses-grid" id="all-courses-grid-view">
+        <!-- Renderizado de los 6 Cursos -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       VISTA 3: PLATAFORMA / PRUEBA EN LÍNEA (DISEÑO SEGÚN IMAGEN 2)
+       ========================================================================== -->
+  <section id="view-test" class="view-section">
+    <div class="platform-layout">
+      <!-- Barra Lateral de la Plataforma -->
+      <aside class="platform-sidebar">
+        <div class="sidebar-brand">
+          <div class="logo-icon-wrap" style="width:34px; height:34px;">
+            <svg class="logo-svg" style="width:20px; height:20px;" viewBox="0 0 24 24">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+          <span style="font-size:18px; font-weight:800; color:var(--text-primary);">Plataforma</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="#test" class="sidebar-item active" data-view="test">
+            <span class="material-symbols-outlined">dashboard</span>
+            Panel Principal
+          </a>
+          <a href="#cursos" class="sidebar-item" data-view="cursos">
+            <span class="material-symbols-outlined">school</span>
+            Mis Cursos
+          </a>
+          <a href="#certificados" class="sidebar-item" data-view="certificados">
+            <span class="material-symbols-outlined">workspace_premium</span>
+            Certificados
+          </a>
+          <a href="#analytics" class="sidebar-item" onclick="showToast('Métricas de rendimiento activas')">
+            <span class="material-symbols-outlined">monitoring</span>
+            Métricas
+          </a>
+          <a href="#projects" class="sidebar-item" onclick="showToast('Repositorios de proyectos prácticos')">
+            <span class="material-symbols-outlined">folder</span>
+            Proyectos
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <a href="#settings" class="sidebar-item" onclick="showToast('Ajustes de cuenta de estudiante')">
+            <span class="material-symbols-outlined">settings</span>
+            Configuración
+          </a>
+        </div>
+      </aside>
+
+      <!-- Contenedor Principal de la Plataforma -->
+      <div class="platform-main">
+        <!-- Barra Superior de la Plataforma -->
+        <div class="platform-top-bar">
+          <div class="search-box">
+            <span class="material-symbols-outlined" style="color:var(--text-muted); font-size:20px;">search</span>
+            <input type="text" placeholder="Buscar preguntas, cursos o documentación..." />
+          </div>
+
+          <div style="display:flex; align-items:center; gap:20px;">
+            <button class="btn btn-ghost" style="padding:8px;" onclick="showToast('No tienes notificaciones pendientes')" title="Notificaciones">
+              <span class="material-symbols-outlined">notifications</span>
+            </button>
+
+            <div class="platform-user-profile">
+              <div class="user-avatar-pill">AR</div>
+              <div>
+                <div style="font-size:14px; font-weight:700; color:var(--text-primary);">Alex Rivera</div>
+                <div style="font-size:11px; color:var(--text-muted);">Estudiante Frontend</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Área de Examen -->
+        <div class="exam-container">
+          <!-- Selector de Tecnología para la Prueba -->
+          <div style="margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+            <div>
+              <span style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em; display:block; margin-bottom:6px;">Seleccionar Tecnología de la Prueba:</span>
+              <div style="display:flex; gap:10px;">
+                <button class="filter-tab tech-select-pill active" data-tech="javascript">
+                  <span class="material-symbols-outlined" style="font-size:16px;">code</span>
+                  JavaScript (10 Preguntas)
+                </button>
+                <button class="filter-tab tech-select-pill" data-tech="html">
+                  <span class="material-symbols-outlined" style="font-size:16px;">html</span>
+                  HTML5 & a11y (10 Preguntas)
+                </button>
+                <button class="filter-tab tech-select-pill" data-tech="css">
+                  <span class="material-symbols-outlined" style="font-size:16px;">palette</span>
+                  CSS3 & Grid (10 Preguntas)
+                </button>
+              </div>
+            </div>
+
+            <div class="exam-timer-pill" id="exam-timer-pill">
+              <span class="material-symbols-outlined">timer</span>
+              <span id="exam-timer-val">45:00</span>
+            </div>
+          </div>
+
+          <!-- Cabecera del Examen -->
+          <div class="exam-header-bar">
+            <div class="exam-title-group">
+              <h1>Examen de Certificación</h1>
+              <p id="exam-tech-subtitle">Evaluación Oficial de JavaScript Moderno</p>
+            </div>
+          </div>
+
+          <!-- Split Layout del Examen (Izquierda: Quiz, Derecha: Trayectoria & Reward) -->
+          <div class="exam-split-grid">
+            <!-- Columna Izquierda: Quiz -->
+            <div class="quiz-main-card">
+              <!-- Stepper & Barra de Progreso -->
+              <div class="stepper-card">
+                <div class="stepper-info">
+                  <span class="stepper-label" id="stepper-current-label">Pregunta 1 de 10</span>
+                  <span class="stepper-percent" id="stepper-percent-label">10% Completado</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" id="stepper-progress-fill" style="width: 10%;"></div>
+                </div>
+              </div>
+
+              <!-- Tarjeta de Pregunta y Opciones -->
+              <div class="question-card">
+                <h2 class="question-text" id="quiz-question-title">
+                  Cargando pregunta...
+                </h2>
+
+                <div class="options-list" id="quiz-options-container">
+                  <!-- Las 4 opciones se inyectan dinámicamente -->
+                </div>
+
+                <!-- Botones de Navegación del Examen -->
+                <div class="quiz-nav-row">
+                  <button class="btn btn-outline" id="exam-prev-btn">
+                    <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+                    Anterior
+                  </button>
+                  <button class="btn btn-primary" id="exam-next-btn">
+                    Siguiente
+                    <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Columna Derecha: Widgets de Trayectoria & Vista Previa -->
+            <div class="exam-side-widgets">
+              <!-- Widget: Trayectoria Actual -->
+              <div class="trajectory-widget">
+                <h3 class="widget-title">Trayectoria Actual</h3>
+                
+                <div class="trajectory-stat-row">
+                  <div class="trajectory-icon">
+                    <span class="material-symbols-outlined">analytics</span>
+                  </div>
+                  <div class="trajectory-meta">
+                    <span class="trajectory-label">Puntaje Estimado</span>
+                    <div style="display:flex; align-items:baseline; gap:2px;">
+                      <span class="trajectory-val" id="trajectory-predicted-score">90</span>
+                      <span style="font-size:16px; font-weight:700; color:var(--text-muted);">%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="trajectory-stat-row">
+                  <div class="trajectory-icon">
+                    <span class="material-symbols-outlined">speed</span>
+                  </div>
+                  <div class="trajectory-meta">
+                    <span class="trajectory-label">Ritmo por Pregunta</span>
+                    <span class="trajectory-val" id="trajectory-pace-val" style="font-size:16px; font-weight:700;">1m 12s / pregunta</span>
+                  </div>
+                </div>
+
+                <div class="trajectory-footer-meta">
+                  <span>Aprobación mín: <strong>80%</strong></span>
+                  <span id="trajectory-status-indicator" style="color:var(--success); font-weight:700;">En Camino</span>
+                </div>
+              </div>
+
+              <!-- Widget: Vista Previa de Recompensa (Certificado) -->
+              <div class="reward-preview-card">
+                <div class="reward-header">
+                  <span class="reward-badge">Recompensa Oficial</span>
+                  <div class="logo-icon-wrap" style="width:28px; height:28px;">
+                    <svg class="logo-svg" style="width:16px; height:16px;" viewBox="0 0 24 24">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="cert-placeholder-box">
+                  <span class="material-symbols-outlined" style="font-size:36px; color:var(--accent-primary); margin-bottom:4px;">workspace_premium</span>
+                  <div class="cert-title">Especialista Frontend</div>
+                  <div class="cert-sub">Completa el examen con +80% para desbloquear y descargar tu certificado</div>
+                </div>
+
+                <button class="btn btn-outline btn-sm" id="download-sample-reward-btn" style="width:100%;">
+                  <span class="material-symbols-outlined" style="font-size:16px;">download</span>
+                  Descargar Muestra de Certificado
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       VISTA 4: CERTIFICADOS & VERIFICACIÓN
+       ========================================================================== -->
+  <section id="view-certificados" class="view-section">
+    <div class="container" style="padding-top:40px; padding-bottom:80px;">
+      <div class="section-header">
+        <div>
+          <div class="badge-pill">ACREDITACIÓN PROFESIONAL</div>
+          <h1 class="section-title">Certificados Oficiales & Validación</h1>
+          <p class="section-subtitle">Genera tu certificado en alta definición con validez internacional para compartir en LinkedIn y redes sociales.</p>
+        </div>
+      </div>
+
+      <div class="cert-customizer-form">
+        <div class="form-group">
+          <label for="cert-standalone-name-input">Nombre Completo para el Certificado:</label>
+          <input type="text" class="form-input" id="cert-standalone-name-input" value="Alex Rivera" placeholder="Ingresa tu nombre y apellido" />
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-primary" id="btn-standalone-png" style="flex:1;">
+            <span class="material-symbols-outlined">image</span>
+            Descargar PNG
+          </button>
+          <button class="btn btn-outline" id="btn-standalone-jpg" style="flex:1;">
+            <span class="material-symbols-outlined">download</span>
+            Descargar JPG
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas de Certificado -->
+      <div class="canvas-preview-wrapper">
+        <canvas id="standalone-cert-canvas"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       MODAL: RESULTADOS DEL EXAMEN & DESCARGA DEL CERTIFICADO (JPG/PNG)
+       ========================================================================== -->
+  <div class="modal-overlay" id="results-certificate-modal">
+    <div class="modal-container">
+      <button class="modal-close-btn" onclick="closeModal('results-certificate-modal')">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <div class="results-banner">
+        <div class="results-score-badge passed" id="results-score-badge">
+          <span class="material-symbols-outlined">verified</span>
+          90% Calificación Final
+        </div>
+        <h2 style="font-size:26px; font-weight:800; color:var(--text-primary); margin-bottom:8px;" id="results-main-title">
+          ¡Felicitaciones! Has Aprobado la Certificación
+        </h2>
+        <p style="font-size:15px; color:var(--text-secondary); max-width:680px; margin:0 auto;" id="results-desc-text">
+          Has demostrado un dominio sólido. Personaliza tu nombre a continuación y descarga tu certificado oficial para compartirlo en tus redes.
+        </p>
+      </div>
+
+      <!-- Formulario de Personalización del Nombre en Tiempo Real -->
+      <div class="cert-customizer-form">
+        <div class="form-group">
+          <label for="cert-student-name-input">Nombre en el Certificado (Edición en tiempo real):</label>
+          <input type="text" class="form-input" id="cert-student-name-input" value="Alex Rivera" placeholder="Tu Nombre Completo" />
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="material-symbols-outlined" style="color:var(--success);">check_circle</span>
+          <span style="font-size:13px; color:var(--text-secondary);">Validación de Firma Digital Activa</span>
+        </div>
+      </div>
+
+      <!-- Vista Previa del Certificado en Canvas -->
+      <div class="canvas-preview-wrapper">
+        <canvas id="certificate-canvas"></canvas>
+      </div>
+
+      <!-- Acciones de Exportación & Compartir -->
+      <div class="export-actions-row">
+        <div class="download-btn-group">
+          <button class="btn btn-primary" id="btn-download-cert-png">
+            <span class="material-symbols-outlined">download</span>
+            Descargar en PNG (Alta Calidad)
+          </button>
+          <button class="btn btn-outline" id="btn-download-cert-jpg">
+            <span class="material-symbols-outlined">image</span>
+            Descargar en JPG
+          </button>
+        </div>
+
+        <!-- Botones de Compartir en Redes Sociales -->
+        <div class="social-share-group">
+          <span style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-right:4px;">Compartir:</span>
+          <button class="social-btn" id="share-linkedin-btn" title="Compartir en LinkedIn">
+            <svg style="width:18px; height:18px; fill:currentColor;" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.44c-.95 0-1.72.77-1.72 1.72s.77 1.72 1.72 1.72 1.72-.77 1.72-1.72-.77-1.72-1.72-1.72z"/></svg>
+          </button>
+          <button class="social-btn" id="share-twitter-btn" title="Compartir en Twitter / X">
+            <svg style="width:16px; height:16px; fill:currentColor;" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </button>
+          <button class="social-btn" id="share-whatsapp-btn" title="Compartir en WhatsApp">
+            <span class="material-symbols-outlined" style="font-size:20px;">chat</span>
+          </button>
+          <button class="social-btn" id="copy-cert-link-btn" title="Copiar Enlace de Verificación">
+            <span class="material-symbols-outlined" style="font-size:20px;">link</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: DETALLE DE CURSO & PROGRAMA DE ESTUDIOS
+       ========================================================================== -->
+  <div class="modal-overlay" id="course-detail-modal">
+    <div class="modal-container" style="max-width:700px;">
+      <button class="modal-close-btn" onclick="closeModal('course-detail-modal')">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <h2 style="font-size:24px; font-weight:800; color:var(--text-primary); margin-bottom:16px;" id="course-modal-title">
+        Detalle del Curso
+      </h2>
+      <div id="course-modal-content">
+        <!-- Inyectado por JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Notificación Toast -->
+  <div id="app-toast" class="toast-msg"></div>
+
+  <!-- Scripts del Proyecto -->
+  <script src="js/questions.js"></script>
+  <script src="js/certificate.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Inicialización del canvas en vista independiente de certificados
+    document.addEventListener('DOMContentLoaded', () => {
+      const standaloneCanvas = document.getElementById('standalone-cert-canvas');
+      const standaloneInput = document.getElementById('cert-standalone-name-input');
+      
+      const redrawStandalone = () => {
+        if (standaloneCanvas) {
+          CertificateEngine.drawCertificate(standaloneCanvas, {
+            studentName: standaloneInput ? standaloneInput.value.trim() || 'Frontend Developer' : 'Alex Rivera',
+            technology: 'JavaScript Moderno & Arquitectura Frontend',
+            score: 98,
+            credentialId: 'FA-894120'
+          });
+        }
+      };
+
+      if (standaloneCanvas) {
+        redrawStandalone();
+        if (standaloneInput) {
+          standaloneInput.addEventListener('input', redrawStandalone);
+        }
+      }
+
+      const btnStandalonePng = document.getElementById('btn-standalone-png');
+      if (btnStandalonePng && standaloneCanvas) {
+        btnStandalonePng.addEventListener('click', () => {
+          const name = standaloneInput ? standaloneInput.value.trim().replace(/\s+/g, '_') : 'Alex_Rivera';
+          CertificateEngine.downloadPNG(standaloneCanvas, `Certificado_Frontend_Academy_${name}.png`);
+        });
+      }
+
+      const btnStandaloneJpg = document.getElementById('btn-standalone-jpg');
+      if (btnStandaloneJpg && standaloneCanvas) {
+        btnStandaloneJpg.addEventListener('click', () => {
+          const name = standaloneInput ? standaloneInput.value.trim().replace(/\s+/g, '_') : 'Alex_Rivera';
+          CertificateEngine.downloadJPG(standaloneCanvas, `Certificado_Frontend_Academy_${name}.jpg`);
+        });
+      }
+
+      // Renderizar también en la vista #view-cursos
+      const allCoursesViewGrid = document.getElementById('all-courses-grid-view');
+      if (allCoursesViewGrid && typeof COURSES_DATA !== 'undefined') {
+        allCoursesViewGrid.innerHTML = COURSES_DATA.map(course => `
+          <div class="course-card">
+            <div class="course-header-meta">
+              <div class="course-icon-badge">
+                <span class="material-symbols-outlined">${course.icon}</span>
+              </div>
+              <span class="course-tag">${course.badge}</span>
+            </div>
+            <span style="font-size:12px; font-weight:700; color:var(--accent-primary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px; display:block;">${course.level}</span>
+            <h3 class="course-title">${course.title}</h3>
+            <p class="course-desc">${course.shortDesc}</p>
+            
+            <div class="course-meta-footer">
+              <div style="display:flex; align-items:center; gap:4px;">
+                <span class="material-symbols-outlined" style="font-size:16px;">schedule</span>
+                <span>${course.duration}</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:4px; color:var(--warning);">
+                <span class="material-symbols-outlined" style="font-size:16px;">star</span>
+                <span style="color:var(--text-primary); font-weight:600;">${course.rating}</span>
+              </div>
+            </div>
+
+            <div class="course-actions-row">
+              <button class="btn btn-outline btn-sm" style="flex:1;" onclick="openCourseModal('${course.id}')">
+                <span class="material-symbols-outlined" style="font-size:16px;">menu_book</span>
+                Ver Programa
+              </button>
+              ${course.hasExam ? `
+                <button class="btn btn-primary btn-sm" style="flex:1;" onclick="launchExamFromCourse('${course.id}')">
+                  <span class="material-symbols-outlined" style="font-size:16px;">quiz</span>
+                  Rendir Prueba
+                </button>
+              ` : `
+                <button class="btn btn-primary btn-sm" style="flex:1;" onclick="openCourseModal('${course.id}')">
+                  <span class="material-symbols-outlined" style="font-size:16px;">how_to_reg</span>
+                  Inscribirse
+                </button>
+              `}
+            </div>
+          </div>
+        `).join('');
+      }
+    });
+  </script>
+</body>
+</html>
