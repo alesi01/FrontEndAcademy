@@ -25,12 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
       questionStartTimes: {},
       isFinished: false,
       score: 0,
-      passed: false
+      passed: false // REQUISITO: Falso por defecto. Solo pasa a true al responder >= 6/10 bien en la prueba
     },
     certificate: {
       studentName: 'Alex Rivera',
       technology: 'JavaScript',
-      score: 95,
+      score: 0,
       credentialId: 'FA-' + Math.floor(100000 + Math.random() * 900000)
     }
   };
@@ -403,6 +403,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Helper para escapar HTML y formatear código `codigo` de forma segura
+  const formatTextWithCode = (str) => {
+    if (!str) return '';
+    const escaped = String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+    return escaped.replace(/`([^`]+)`/g, '<code style="background:var(--accent-primary-light); color:var(--accent-primary); padding:2px 6px; border-radius:4px; font-family:var(--font-code); font-size:0.9em; border:1px solid var(--accent-primary-border);">$1</code>');
+  };
+
   // Renderizar Pregunta Actual
   const renderCurrentQuestion = () => {
     const { questions, currentIndex, userAnswers } = state.exam;
@@ -423,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Renderizar Texto de la Pregunta
     const questionTextEl = document.getElementById('quiz-question-title');
     if (questionTextEl) {
-      questionTextEl.textContent = currentQ.question;
+      questionTextEl.innerHTML = formatTextWithCode(currentQ.question);
     }
 
     // Renderizar Opciones
@@ -435,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="option-check-circle">
             <span class="material-symbols-outlined" style="font-size:16px;">${selectedOption === idx ? 'check' : ''}</span>
           </div>
-          <div class="option-text">${opt}</div>
+          <div class="option-text">${formatTextWithCode(opt)}</div>
         </div>
       `).join('');
     }
@@ -505,7 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const { questions, userAnswers, totalTimeSeconds, timeLeftSeconds } = state.exam;
     const answeredCount = Object.keys(userAnswers).length;
 
-    // Calcular puntaje estimado actual
+    // Calcular respuestas correctas hasta el momento
     let correctSoFar = 0;
     Object.entries(userAnswers).forEach(([qIdx, answerIdx]) => {
       const q = questions[parseInt(qIdx, 10)];
@@ -536,14 +547,14 @@ document.addEventListener('DOMContentLoaded', () => {
         : `${paceSecs}s / pregunta`;
     }
 
-    // Indicador de estado
+    // Indicador de estado (mínimo 6/10 para aprobar -> 60%)
     const statusEl = document.getElementById('trajectory-status-indicator');
     if (statusEl) {
-      if (predictedScore >= 80) {
-        statusEl.textContent = 'En Camino de Aprobación';
+      if (predictedScore >= 60) {
+        statusEl.textContent = 'En Camino de Aprobación (≥6/10)';
         statusEl.style.color = 'var(--success)';
       } else {
-        statusEl.textContent = 'Necesita Refuerzo (<80%)';
+        statusEl.textContent = 'Requiere Refuerzo (<6/10)';
         statusEl.style.color = 'var(--warning)';
       }
     }
@@ -576,7 +587,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const finalScore = Math.round((correctTotal / state.exam.questions.length) * 100);
-    const passed = finalScore >= 80;
+    // REQUISITO ESTRICTO: Aprobación con mínimo 6/10 (60%)
+    const passed = correctTotal >= 6;
 
     state.exam.score = finalScore;
     state.exam.passed = passed;
@@ -600,39 +612,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const titleEl = document.getElementById('results-main-title');
     const descEl = document.getElementById('results-desc-text');
     const studentInput = document.getElementById('cert-student-name-input');
+    const btnDownloadPNG = document.getElementById('btn-download-cert-png');
+    const btnDownloadJPG = document.getElementById('btn-download-cert-jpg');
 
     if (studentInput) {
       studentInput.value = state.certificate.studentName;
+      studentInput.disabled = !passed;
     }
 
     if (scoreBadge) {
       scoreBadge.className = `results-score-badge ${passed ? 'passed' : 'failed'}`;
       scoreBadge.innerHTML = `
         <span class="material-symbols-outlined">${passed ? 'verified' : 'cancel'}</span>
-        ${score}% Calificación Final (${correct}/${total} Correctas)
+        ${passed ? '¡APROBADO!' : 'NO APROBADO'} - ${correct}/${total} Respuestas Correctas (${score}%)
       `;
     }
 
     if (titleEl) {
       titleEl.textContent = passed
         ? '¡Felicitaciones! Has Aprobado la Certificación'
-        : 'Examen Finalizado - Requiere Repaso';
+        : 'Examen No Aprobado (Mínimo 6/10 Requerido)';
     }
 
     if (descEl) {
       descEl.textContent = passed
-        ? `Has demostrado un dominio sólido en ${state.exam.technologyName}. Personaliza tu nombre a continuación y descarga tu certificado oficial para compartir en tus redes.`
-        : `Obtuviste un ${score}%, el puntaje mínimo de acreditación es 80%. Puedes revisar los módulos del curso y volver a intentarlo en cualquier momento.`;
+        ? `Obtuviste ${correct} de ${total} respuestas correctas (${score}%). Has cumplido con la nota mínima requerida (6/10). Personaliza tu nombre a continuación y descarga tu certificado oficial en PNG o JPG.`
+        : `Obtuviste ${correct} de ${total} respuestas correctas (${score}%). El certificado está bloqueado. Para desbloquear y descargar tu certificado oficial debes responder correctamente al menos 6 de las 10 preguntas (60%). ¡Inténtalo de nuevo!`;
+    }
+
+    // Configurar estado visual de botones de descarga
+    if (btnDownloadPNG && btnDownloadJPG) {
+      if (passed) {
+        btnDownloadPNG.style.opacity = '1';
+        btnDownloadPNG.style.pointerEvents = 'auto';
+        btnDownloadJPG.style.opacity = '1';
+        btnDownloadJPG.style.pointerEvents = 'auto';
+      } else {
+        btnDownloadPNG.style.opacity = '0.5';
+        btnDownloadJPG.style.opacity = '0.5';
+      }
     }
 
     // Dibujar Certificado en el Canvas
-    renderCertificateToCanvas();
+    renderCertificateToCanvas(passed);
 
     modal.classList.add('show');
   };
 
   // Renderizar certificado en Canvas en vivo
-  const renderCertificateToCanvas = () => {
+  const renderCertificateToCanvas = (isUnlocked = false) => {
     const canvas = document.getElementById('certificate-canvas');
     if (!canvas) return;
 
@@ -642,25 +670,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     CertificateEngine.drawCertificate(canvas, {
       studentName: currentName,
-      technology: state.certificate.technology,
-      score: state.certificate.score,
+      technology: state.certificate.technology || 'JavaScript',
+      score: state.certificate.score || 0,
       credentialId: state.certificate.credentialId,
       themeColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim()
     });
+
+    // Si NO aprobó o no ha rendido (<6/10), dibujar marca de agua de bloqueo
+    if (!isUnlocked) {
+      const ctx = canvas.getContext('2d');
+      ctx.save();
+      ctx.fillStyle = 'rgba(9, 12, 21, 0.82)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#ef4444';
+      ctx.font = '700 46px "Hanken Grotesk", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🔒 CERTIFICADO BLOQUEADO', canvas.width / 2, canvas.height / 2 - 20);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '500 24px "Hanken Grotesk", sans-serif';
+      ctx.fillText('Debes rendir la prueba en línea y responder al menos 6 de 10 preguntas correctamente (60%) para descargarlo.', canvas.width / 2, canvas.height / 2 + 30);
+      ctx.restore();
+    }
   };
 
   // Re-dibujar al escribir el nombre en vivo
   const studentNameInput = document.getElementById('cert-student-name-input');
   if (studentNameInput) {
     studentNameInput.addEventListener('input', () => {
-      renderCertificateToCanvas();
+      if (state.exam.passed) {
+        renderCertificateToCanvas(true);
+      }
     });
   }
 
-  // Botón Descargar PNG
+  // Botón Descargar PNG Modal
   const btnDownloadPNG = document.getElementById('btn-download-cert-png');
   if (btnDownloadPNG) {
     btnDownloadPNG.addEventListener('click', () => {
+      if (!state.exam.passed) {
+        showToast('⚠️ Certificado bloqueado. Debes responder al menos 6 de 10 preguntas correctamente en el examen.');
+        return;
+      }
       const canvas = document.getElementById('certificate-canvas');
       if (canvas) {
         const cleanName = state.certificate.studentName.replace(/\s+/g, '_');
@@ -670,10 +722,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Botón Descargar JPG
+  // Botón Descargar JPG Modal
   const btnDownloadJPG = document.getElementById('btn-download-cert-jpg');
   if (btnDownloadJPG) {
     btnDownloadJPG.addEventListener('click', () => {
+      if (!state.exam.passed) {
+        showToast('⚠️ Certificado bloqueado. Debes responder al menos 6 de 10 preguntas correctamente en el examen.');
+        return;
+      }
       const canvas = document.getElementById('certificate-canvas');
       if (canvas) {
         const cleanName = state.certificate.studentName.replace(/\s+/g, '_');
@@ -683,29 +739,105 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Descargar muestra desde la tarjeta de Reward
+  // Descargar muestra / ver recompensa desde la tarjeta lateral del Examen
   const downloadSampleBtn = document.getElementById('download-sample-reward-btn');
   if (downloadSampleBtn) {
     downloadSampleBtn.addEventListener('click', () => {
-      state.certificate.studentName = 'Alex Rivera';
-      state.certificate.technology = state.exam.technologyName || 'JavaScript';
-      state.certificate.score = 95;
-      openResultsModal(95, 10, 10, true, false);
+      if (!state.exam.passed) {
+        showToast('⚠️ Debes responder las 10 preguntas y aprobar con al menos 6/10 respuestas correctas para desbloquear el certificado.');
+      } else {
+        openResultsModal(state.exam.score, Math.round(state.exam.score / 10), 10, true, false);
+      }
     });
   }
 
-  // Renderizado de Certificado Autónomo en la vista de Certificados
+  // Renderizado de la vista independiente "Certificados" (#view-certificados)
   const renderStandaloneCertificate = () => {
-    state.certificate.studentName = state.certificate.studentName || 'Alex Rivera';
-    state.certificate.technology = 'JavaScript & Frontend Architecture';
-    state.certificate.score = 98;
-    renderCertificateToCanvas();
+    const standaloneCanvas = document.getElementById('standalone-cert-canvas');
+    const container = document.getElementById('cert-standalone-container');
+
+    if (!state.exam.passed) {
+      // Bloqueado si no ha aprobado el examen
+      if (container) {
+        container.innerHTML = `
+          <div style="background:var(--bg-surface); border:2px dashed var(--danger); border-radius:var(--radius-xl); padding:48px 24px; text-align:center; max-width:700px; margin:0 auto;">
+            <span class="material-symbols-outlined" style="font-size:64px; color:var(--danger); margin-bottom:12px;">lock</span>
+            <h2 style="font-size:24px; font-weight:800; color:var(--text-primary); margin-bottom:8px;">Certificado No Disponible</h2>
+            <p style="font-size:15px; color:var(--text-secondary); max-width:500px; margin:0 auto 24px;">
+              El certificado oficial solo se desbloquea y se puede descargar una vez que rindas y apruebes la prueba en línea con un mínimo de <strong>6 de 10 respuestas correctas (60%)</strong>.
+            </p>
+            <button class="btn btn-primary btn-lg" onclick="switchView('test')">
+              <span class="material-symbols-outlined">quiz</span>
+              Rendir Prueba en Línea Ahora
+            </button>
+          </div>
+        `;
+      }
+    } else {
+      // Desbloqueado si ya aprobó la prueba
+      if (container) {
+        container.innerHTML = `
+          <div class="cert-customizer-form">
+            <div class="form-group">
+              <label for="cert-standalone-name-input">Nombre Completo para el Certificado:</label>
+              <input type="text" class="form-input" id="cert-standalone-name-input" value="${state.certificate.studentName}" placeholder="Ingresa tu nombre y apellido" />
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn btn-primary" id="btn-standalone-png" style="flex:1;">
+                <span class="material-symbols-outlined">image</span>
+                Descargar PNG
+              </button>
+              <button class="btn btn-outline" id="btn-standalone-jpg" style="flex:1;">
+                <span class="material-symbols-outlined">download</span>
+                Descargar JPG
+              </button>
+            </div>
+          </div>
+          <div class="canvas-preview-wrapper">
+            <canvas id="standalone-cert-canvas"></canvas>
+          </div>
+        `;
+
+        const newCanvas = document.getElementById('standalone-cert-canvas');
+        const newInput = document.getElementById('cert-standalone-name-input');
+        const newPngBtn = document.getElementById('btn-standalone-png');
+        const newJpgBtn = document.getElementById('btn-standalone-jpg');
+
+        const redraw = () => {
+          if (newCanvas) {
+            CertificateEngine.drawCertificate(newCanvas, {
+              studentName: newInput ? newInput.value.trim() || 'Frontend Developer' : state.certificate.studentName,
+              technology: state.certificate.technology,
+              score: state.certificate.score,
+              credentialId: state.certificate.credentialId
+            });
+          }
+        };
+        redraw();
+
+        if (newInput) newInput.addEventListener('input', redraw);
+        if (newPngBtn) newPngBtn.addEventListener('click', () => {
+          const name = newInput ? newInput.value.trim().replace(/\s+/g, '_') : 'Alex_Rivera';
+          CertificateEngine.downloadPNG(newCanvas, `Certificado_${state.certificate.technology}_${name}.png`);
+          showToast('¡Certificado PNG descargado!');
+        });
+        if (newJpgBtn) newJpgBtn.addEventListener('click', () => {
+          const name = newInput ? newInput.value.trim().replace(/\s+/g, '_') : 'Alex_Rivera';
+          CertificateEngine.downloadJPG(newCanvas, `Certificado_${state.certificate.technology}_${name}.jpg`);
+          showToast('¡Certificado JPG descargado!');
+        });
+      }
+    }
   };
 
   // Compartir en Redes Sociales
   const shareLinkedInBtn = document.getElementById('share-linkedin-btn');
   if (shareLinkedInBtn) {
     shareLinkedInBtn.addEventListener('click', () => {
+      if (!state.exam.passed) {
+        showToast('⚠️ Debes aprobar el cuestionario con mínimo 6/10 para compartir tu certificado.');
+        return;
+      }
       const text = encodeURIComponent(`¡Acabo de certificar mis habilidades en ${state.certificate.technology} con un puntaje de ${state.certificate.score}% en Frontend Academy! 🚀📜 #frontend #javascript #webdev #frontendacademy`);
       window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://frontendacademy.org')}&summary=${text}`, '_blank');
     });
@@ -714,6 +846,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const shareTwitterBtn = document.getElementById('share-twitter-btn');
   if (shareTwitterBtn) {
     shareTwitterBtn.addEventListener('click', () => {
+      if (!state.exam.passed) {
+        showToast('⚠️ Debes aprobar el cuestionario con mínimo 6/10 para compartir tu certificado.');
+        return;
+      }
       const text = encodeURIComponent(`¡Aprobé la evaluación de ${state.certificate.technology} en @FrontendAcademy con ${state.certificate.score}%! 🎓💻 Aquí mi certificado oficial:`);
       window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent('https://frontendacademy.org/verify/' + state.certificate.credentialId)}`, '_blank');
     });
@@ -722,6 +858,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const shareWhatsAppBtn = document.getElementById('share-whatsapp-btn');
   if (shareWhatsAppBtn) {
     shareWhatsAppBtn.addEventListener('click', () => {
+      if (!state.exam.passed) {
+        showToast('⚠️ Debes aprobar el cuestionario con mínimo 6/10 para compartir tu certificado.');
+        return;
+      }
       const text = encodeURIComponent(`¡Hola! Completé la certificación en ${state.certificate.technology} en Frontend Academy con ${state.certificate.score}% de calificación. Credencial: ${state.certificate.credentialId}`);
       window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
     });
@@ -730,6 +870,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const copyCertLinkBtn = document.getElementById('copy-cert-link-btn');
   if (copyCertLinkBtn) {
     copyCertLinkBtn.addEventListener('click', () => {
+      if (!state.exam.passed) {
+        showToast('⚠️ Debes aprobar el cuestionario con mínimo 6/10 para compartir tu enlace.');
+        return;
+      }
       const link = `https://frontendacademy.org/verify/${state.certificate.credentialId}`;
       navigator.clipboard.writeText(link).then(() => {
         showToast('¡Enlace de verificación copiado al portapapeles!');

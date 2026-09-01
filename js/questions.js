@@ -1,7 +1,8 @@
 /**
- * Banco de preguntas para la Prueba en Línea
- * Tecnologías disponibles: HTML, CSS, JavaScript
- * Cada test selecciona aleatoriamente 10 preguntas.
+ * FRONTEND ACADEMY - BANCO DE PREGUNTAS
+ * Tecnologías evaluadas: HTML, CSS, JavaScript
+ * Selección aleatoria de 10 preguntas por examen.
+ * REQUISITO TÉCNICO: La respuesta correcta se ubica SIEMPRE en la 2da opción (índice 1 / Opción B).
  */
 
 const QUESTION_BANK = {
@@ -25,11 +26,11 @@ const QUESTION_BANK = {
       question: '¿Qué retorna la expresión `typeof NaN` y por qué?',
       options: [
         '`"nan"`, porque es un tipo primitivo especial independiente.',
+        '`"number"`, porque en la especificación IEEE 754 representa un valor numérico no representable (Not a Number).',
         '`"undefined"`, ya que representa un valor no numérico indefinido.',
-        '`"number"`, porque en la especificación IEEE 754 representa un valor numérico no representable.',
         '`"object"`, porque es una instancia del objeto global Number.'
       ],
-      correctAnswer: 2,
+      correctAnswer: 1,
       explanation: 'Según la especificación ECMAScript (IEEE 754), NaN pertenece al conjunto de valores del tipo Number.'
     },
     {
@@ -38,7 +39,7 @@ const QUESTION_BANK = {
       question: '¿Cómo funciona el Event Loop de JavaScript al procesar Microtasks y Macrotasks?',
       options: [
         'Las Macrotasks (como `setTimeout`) tienen prioridad absoluta sobre todas las Microtasks (como `Promise.then`).',
-        'La cola de Microtasks se vacía completamente después de cada Macrotask antes de renderizar o pasar a la siguiente Macrotask.',
+        'La cola de Microtasks se vacía completamente después de cada Macrotask antes de realizar el renderizado o pasar a la siguiente Macrotask.',
         'Microtasks y Macrotasks se ejecutan en orden aleatorio según la carga del hilo principal.',
         'Solo se ejecuta una Microtask por cada ciclo del Event Loop.'
       ],
@@ -48,7 +49,7 @@ const QUESTION_BANK = {
     {
       id: 'js-4',
       topic: 'JavaScript',
-      question: '¿Cuál es el resultado de `[1, 2, 3] + [4, 5, 6]` en JavaScript?',
+      question: '¿Cuál es el resultado de la expresión `[1, 2, 3] + [4, 5, 6]` en JavaScript?',
       options: [
         '`[1, 2, 3, 4, 5, 6]`',
         '`"1,2,34,5,6"`',
@@ -61,12 +62,12 @@ const QUESTION_BANK = {
     {
       id: 'js-5',
       topic: 'JavaScript',
-      question: '¿Qué ventaja principal ofrece el uso de `WeakMap` frente a un `Map` estándar?',
+      question: '¿Qué ventaja principal ofrece el uso de `WeakMap` frente a un `Map` estándar en JavaScript?',
       options: [
-        'Permite iterar sobre sus claves de forma más rápida con `forEach`.',
-        'Sus claves deben ser objetos y se mantienen con referencias débiles, permitiendo que el Garbage Collector libere memoria si no hay otras referencias.',
+        'Permite iterar sobre sus claves de forma más rápida con el método `forEach`.',
+        'Sus claves deben ser objetos y se mantienen con referencias débiles, permitiendo que el Garbage Collector libere memoria si no hay otras referencias al objeto.',
         'Admite valores primitivos como claves (strings, numbers, booleans).',
-        'Permite serialización directa a JSON con `JSON.stringify()`.'
+        'Permite la serialización directa del objeto a formato JSON mediante `JSON.stringify()`.'
       ],
       correctAnswer: 1,
       explanation: 'En WeakMap las claves son obligatoriamente objetos y se almacenan de manera débil, evitando memory leaks cuando el objeto ya no se usa.'
@@ -76,10 +77,10 @@ const QUESTION_BANK = {
       topic: 'JavaScript',
       question: 'En una función flecha (arrow function), ¿cómo se determina el valor de `this`?',
       options: [
-        'Se vincula dinámicamente al objeto que invoca la función.',
-        'Se hereda léxicamente del contexto circundante en el momento de su definición.',
-        'Siempre apunta al objeto `window` o `globalThis`.',
-        'Se puede modificar utilizando `.bind()`, `.call()` o `.apply()`.'
+        'Se vincula dinámicamente al objeto que invoca la función en tiempo de ejecución.',
+        'Se captura o hereda léxicamente del contexto circundante en el momento en que se define la función.',
+        'Siempre apunta al objeto global `window` o `globalThis`.',
+        'Se puede redefinir dinámicamente utilizando `.bind()`, `.call()` o `.apply()`.'
       ],
       correctAnswer: 1,
       explanation: 'Las arrow functions no tienen su propio `this`; capturan el valor de `this` del contexto léxico donde fueron creadas.'
@@ -87,7 +88,7 @@ const QUESTION_BANK = {
     {
       id: 'js-7',
       topic: 'JavaScript',
-      question: '¿Qué método nativo de Array devuelve una copia superficial (shallow copy) de una porción del array sin mutar el original?',
+      question: '¿Qué método nativo de `Array` devuelve una copia superficial (shallow copy) de una porción del array sin modificar el original?',
       options: [
         '`Array.prototype.splice()`',
         '`Array.prototype.slice()`',
@@ -100,7 +101,7 @@ const QUESTION_BANK = {
     {
       id: 'js-8',
       topic: 'JavaScript',
-      question: '¿Qué técnica permite ejecutar una función solo después de que haya transcurrido un tiempo de inactividad desde su última invocación?',
+      question: '¿Qué técnica de optimización permite diferir la ejecución de una función hasta que haya transcurrido un tiempo determinado de inactividad?',
       options: [
         'Throttling',
         'Debouncing',
@@ -113,12 +114,12 @@ const QUESTION_BANK = {
     {
       id: 'js-9',
       topic: 'JavaScript',
-      question: '¿Cuál es la salida de `console.log(0.1 + 0.2 === 0.3)` en JavaScript estándar?',
+      question: '¿Cuál es el resultado de la comparación `0.1 + 0.2 === 0.3` en JavaScript y por qué?',
       options: [
-        '`true`',
-        '`false`, debido a la precisión de punto flotante binario IEEE 754 (0.30000000000000004)',
-        '`TypeError`',
-        '`undefined`'
+        '`true`, porque la suma aritmética exacta equivale a 0.3.',
+        '`false`, debido a la imprecisión en la representación binaria de punto flotante IEEE 754 (que resulta en `0.30000000000000004`).',
+        '`TypeError`, porque no se pueden sumar números decimales sin llamar a `parseFloat()`.',
+        '`undefined`, porque la comparación requiere conversión explícita a entero.'
       ],
       correctAnswer: 1,
       explanation: 'Debido a la representación de punto flotante de doble precisión IEEE 754, 0.1 + 0.2 resulta en 0.30000000000000004, por lo que la igualdad es falsa.'
@@ -126,38 +127,38 @@ const QUESTION_BANK = {
     {
       id: 'js-10',
       topic: 'JavaScript',
-      question: '¿Qué hace el operador Nullish Coalescing (`??`) a diferencia del operador lógico OR (`||`)?',
+      question: '¿Qué hace el operador de fusión nula o Nullish Coalescing (`??`) a diferencia del operador lógico OR (`||`)?',
       options: [
-        'Evalúa el operando derecho solo si el izquierdo es estrictamente `null` o `undefined`.',
-        'Evalúa el operando derecho si el izquierdo es cualquier valor falsy (`0`, `""`, `false`, `null`, `undefined`).',
-        'Realiza una comparación de tipo estricto entre ambos valores.',
-        'Convierte automáticamente ambos operandos a booleanos.'
+        'Evalúa el valor derecho si el izquierdo es cualquier valor considerado falsy (`0`, `""`, `false`, `null`, `undefined`).',
+        'Evalúa el valor derecho únicamente si el izquierdo es estrictamente `null` o `undefined`.',
+        'Realiza una comparación de tipo estricto entre ambos operandos devolviendo un booleano.',
+        'Convierte automáticamente ambos operandos a números antes de comparar.'
       ],
-      correctAnswer: 0,
+      correctAnswer: 1,
       explanation: '`??` solo toma el valor por defecto si el primer valor es null o undefined, preservando valores válidos como `0` o `""`.'
     },
     {
       id: 'js-11',
       topic: 'JavaScript',
-      question: '¿Qué método moderno permite realizar una copia profunda (deep clone) nativa de objetos complejos en JavaScript?',
+      question: '¿Qué método nativo y moderno de JavaScript permite realizar una copia profunda (deep clone) de objetos complejos?',
       options: [
         '`Object.assign({}, obj)`',
-        '`{ ...obj }`',
         '`structuredClone(obj)`',
+        '`{ ...obj }`',
         '`Object.freeze(obj)`'
       ],
-      correctAnswer: 2,
+      correctAnswer: 1,
       explanation: '`structuredClone()` es la API nativa de JavaScript para realizar clonaciones profundas con soporte para ciclos, Date, RegExp, Map y Set.'
     },
     {
       id: 'js-12',
       topic: 'JavaScript',
-      question: '¿Cuál es la función del método `Promise.allSettled()`?',
+      question: '¿Cuál es el comportamiento principal del método `Promise.allSettled()`?',
       options: [
-        'Se rechaza inmediatamente si alguna de las promesas falla.',
-        'Espera a que todas las promesas se resuelvan o rechacen, devolviendo un array con el estado y resultado de cada una.',
-        'Retorna el valor de la primera promesa resuelta exitosamente.',
-        'Ejecuta las promesas en serie de forma sincrónica.'
+        'Se rechaza de forma inmediata en cuanto una de las promesas del array falla.',
+        'Espera a que todas las promesas se resuelvan o rechacen, devolviendo un array con el estado y valor final de cada una.',
+        'Devuelve el resultado únicamente de la primera promesa que se cumpla con éxito.',
+        'Ejecuta las promesas en secuencia síncrona en lugar de en paralelo.'
       ],
       correctAnswer: 1,
       explanation: '`Promise.allSettled()` espera a que todas concluyan (cumplidas o rechazadas) sin abortar si alguna falla.'
@@ -167,10 +168,10 @@ const QUESTION_BANK = {
       topic: 'JavaScript',
       question: '¿Qué es una Clausura (Closure) en JavaScript?',
       options: [
-        'Una función que finaliza la ejecución de un bucle inmediatamente.',
-        'La combinación de una función y el entorno léxico en el que fue declarada, permitiéndole acceder a variables de un ámbito exterior incluso tras su finalización.',
-        'Un método privado que no puede ser invocado desde fuera de una clase.',
-        'Una sintaxis para cerrar conexiones de sockets en Node.js.'
+        'Una instrucción especial que detiene la ejecución de un bucle de forma inmediata.',
+        'La combinación de una función y el entorno léxico en el que fue creada, permitiéndole acceder a variables de su ámbito externo incluso después de que la función padre haya finalizado.',
+        'Un método privado que prohíbe el acceso a las propiedades de una clase.',
+        'Una estructura de control para cerrar conexiones asíncronas de red.'
       ],
       correctAnswer: 1,
       explanation: 'Un closure permite a una función interna recordar y acceder a variables de su scope padre incluso cuando la función externa ya retornó.'
@@ -178,12 +179,12 @@ const QUESTION_BANK = {
     {
       id: 'js-14',
       topic: 'JavaScript',
-      question: '¿Cuál es la forma correcta de crear un Módulo ES (ESM) exportando una función por defecto?',
+      question: '¿Cuál es la sintaxis estándar en ES Modules (ESM) para exportar una función como exportación por defecto?',
       options: [
-        '`module.exports = myFunction;`',
-        '`export default function myFunction() {}`',
-        '`export { myFunction as defaultExport };`',
-        '`exports.default = myFunction;`'
+        '`module.exports = miFuncion;`',
+        '`export default function miFuncion() {}`',
+        '`export { miFuncion as defaultExport };`',
+        '`exports.default = miFuncion;`'
       ],
       correctAnswer: 1,
       explanation: 'En ECMAScript Modules estándar se utiliza la palabra clave `export default`.'
@@ -194,12 +195,12 @@ const QUESTION_BANK = {
     {
       id: 'html-1',
       topic: 'HTML',
-      question: '¿Cuál es el propósito semántico principal del elemento `<main>` en HTML5?',
+      question: '¿Cuál es la función semántica principal del elemento `<main>` en un documento HTML5?',
       options: [
-        'Contener el menú de navegación principal del sitio.',
-        'Representar el contenido temático central y único del documento, excluyendo cabeceras, pies y barras laterales repetitivas.',
-        'Agrupar todos los enlaces de pie de página y copyright.',
-        'Definir un contenedor para scripts interactivos y estilos globales.'
+        'Contener el menú de navegación principal y el logotipo del sitio web.',
+        'Encapsular el contenido temático principal y exclusivo del documento, excluyendo barras laterales, cabeceras y pies de página.',
+        'Agrupar exclusivamente los enlaces de derechos de autor y pie de página.',
+        'Definir un contenedor técnico para importar scripts y hojas de estilo globales.'
       ],
       correctAnswer: 1,
       explanation: '`<main>` debe contener únicamente el contenido directo y específico del documento, debiendo ser único por página sin repetirse en cabeceras o footers.'
@@ -207,12 +208,12 @@ const QUESTION_BANK = {
     {
       id: 'html-2',
       topic: 'HTML',
-      question: '¿Para qué sirve el atributo `loading="lazy"` en una etiqueta `<img>` o `<iframe>`?',
+      question: '¿Para qué se utiliza el atributo nativo `loading="lazy"` en elementos `<img>` e `<iframe>`?',
       options: [
-        'Aplica una animación de carga suave con un spinner CSS.',
-        'Indica al navegador que difiera la carga del recurso hasta que esté cerca del viewport del usuario, optimizando el rendimiento y consumo de datos.',
-        'Descarga la imagen en baja resolución y la sustituye al hacer click.',
-        'Fuerza la descarga en segundo plano con máxima prioridad.'
+        'Muestra una animación de carga (spinner) mientras se descarga la imagen.',
+        'Pospone la descarga del recurso hasta que esté próximo a entrar en la ventana gráfica (viewport), optimizando el rendimiento.',
+        'Carga la imagen en baja resolución y la reemplaza por una de alta resolución al hacer clic.',
+        'Fuerza la descarga en segundo plano con la máxima prioridad de red.'
       ],
       correctAnswer: 1,
       explanation: 'El lazy loading nativo pospone la solicitud HTTP de imágenes o iframes fuera de pantalla hasta que el usuario se desplaza cerca de ellos.'
@@ -220,12 +221,12 @@ const QUESTION_BANK = {
     {
       id: 'html-3',
       topic: 'HTML',
-      question: '¿Cuál es la diferencia entre los atributos `defer` y `async` en una etiqueta `<script>`?',
+      question: '¿Cuál es la diferencia de ejecución entre los atributos `async` y `defer` en etiquetas `<script>` externas?',
       options: [
-        '`async` ejecuta el script en orden en cuanto el DOM está completamente parseado; `defer` bloquea el render.',
-        '`async` descarga el script en paralelo y lo ejecuta de inmediato apenas finaliza la descarga; `defer` descarga en paralelo y espera al parseo completo del HTML manteniendo el orden.',
-        'Ambos son idénticos y solo varían por compatibilidad con navegadores antiguos.',
-        '`defer` solo funciona en scripts embebidos en el HTML, no en archivos externos.'
+        '`async` ejecuta los scripts en orden estricto; `defer` los ejecuta de forma aleatoria.',
+        '`async` descarga en segundo plano y ejecuta de inmediato interrumpiendo el HTML; `defer` descarga en segundo plano y espera al parseo completo del HTML manteniendo el orden.',
+        'Ambos atributos se comportan exactamente igual en los navegadores modernos.',
+        '`defer` bloquea la descarga de estilos CSS hasta que el script finaliza.'
       ],
       correctAnswer: 1,
       explanation: '`async` ejecuta de forma independiente en cuanto llega interrumpiendo el parser; `defer` respeta el orden de los scripts y se ejecuta justo antes de `DOMContentLoaded`.'
@@ -233,12 +234,12 @@ const QUESTION_BANK = {
     {
       id: 'html-4',
       topic: 'HTML',
-      question: '¿Qué etiqueta HTML5 debe usarse para proporcionar texto alternativo y pie de foto estructurado a una imagen o diagrama?',
+      question: '¿Qué etiquetas semánticas de HTML5 deben combinarse para asociar una imagen con su leyenda explicativa?',
       options: [
-        '`<picture>` con `<source>`',
-        '`<figure>` acompañado de `<figcaption>`',
-        '`<section>` con un párrafo `<p class="caption">`',
-        '`<aside>` con atributo `aria-label`'
+        '`<picture>` y `<source>`',
+        '`<figure>` para el contenedor e `<figcaption>` para el pie de foto',
+        '`<section>` y un párrafo `<p class="caption">`',
+        '`<aside>` con el atributo `aria-label`'
       ],
       correctAnswer: 1,
       explanation: '`<figure>` representa contenido autocontenido y `<figcaption>` define su leyenda o descripción semántica.'
@@ -246,49 +247,49 @@ const QUESTION_BANK = {
     {
       id: 'html-5',
       topic: 'HTML',
-      question: '¿Qué atributo de accesibilidad (WAI-ARIA) se utiliza para describir a lectores de pantalla qué elemento controla el despliegue de un acordeón o menú?',
+      question: '¿Qué atributos WAI-ARIA se utilizan para indicar que un botón controla la apertura y cierre de un menú o acordeón?',
       options: [
-        '`aria-expanded="true/false"` y `aria-controls="id"`',
-        '`aria-hidden="true"`',
-        '`aria-live="polite"`',
-        '`role="navigation"`'
+        '`aria-hidden="true"` y `role="presentation"`',
+        '`aria-expanded="true/false"` y `aria-controls="id_del_contenedor"`',
+        '`aria-live="polite"` y `aria-atomic="true"`',
+        '`role="navigation"` y `aria-label="menu"`'
       ],
-      correctAnswer: 0,
+      correctAnswer: 1,
       explanation: '`aria-expanded` indica el estado abierto/cerrado y `aria-controls` asocia el botón disparador con el contenedor desplegable.'
     },
     {
       id: 'html-6',
       topic: 'HTML',
-      question: '¿Cuál es la etiqueta recomendada en HTML5 para mostrar código fuente dentro de un bloque preformateado?',
+      question: '¿Cuál es la estructura recomendada en HTML5 para representar bloques de código fuente preformateado?',
       options: [
-        '`<pre><code>...</code></pre>`',
         '`<samp><kbd>...</kbd></samp>`',
+        '`<pre><code>...</code></pre>`',
         '`<textarea readonly>...</textarea>`',
         '`<blockquote cite="code">...</blockquote>`'
       ],
-      correctAnswer: 0,
+      correctAnswer: 1,
       explanation: 'La convención semántica estándar es envolver el elemento en línea `<code>` dentro de un bloque `<pre>`.'
     },
     {
       id: 'html-7',
       topic: 'HTML',
-      question: '¿Qué elemento HTML5 permite crear un cuadro de diálogo nativo o ventana modal con soporte de backdrop accesible mediante `.showModal()`?',
+      question: '¿Qué elemento nativo de HTML5 permite crear cuadros de diálogo y ventanas modales accesibles mediante el método `.showModal()`?',
       options: [
         '`<popup>`',
-        '`<modal>`',
         '`<dialog>`',
+        '`<modal>`',
         '`<window>`'
       ],
-      correctAnswer: 2,
+      correctAnswer: 1,
       explanation: '`<dialog>` es el elemento nativo de HTML5 para modales y cuadros de diálogo, gestionando el foco y el pseudo-elemento `::backdrop`.'
     },
     {
       id: 'html-8',
       topic: 'HTML',
-      question: '¿Qué elemento permite proveer una lista de opciones autocompletables predefinidas a un `<input type="text">`?',
+      question: '¿Qué elemento de HTML5 permite ofrecer una lista predefinida de opciones de autocompletado a un campo `<input type="text">`?',
       options: [
         '`<select>`',
-        '`<datalist>` asociado mediante el atributo `list`',
+        '`<datalist>` mediante la vinculación con el atributo `list`',
         '`<optgroup>`',
         '`<menu>`'
       ],
@@ -298,25 +299,25 @@ const QUESTION_BANK = {
     {
       id: 'html-9',
       topic: 'HTML',
-      question: '¿Qué etiqueta semántica es la más apropiada para encapsular una publicación de blog, un comentario o una tarjeta de producto independiente y reutilizable?',
+      question: '¿Qué etiqueta semántica es la adecuada para estructurar una entrada de blog, noticia o tarjeta de producto autocontenida?',
       options: [
-        '`<article>`',
         '`<section>`',
+        '`<article>`',
         '`<div>`',
         '`<aside>`'
       ],
-      correctAnswer: 0,
+      correctAnswer: 1,
       explanation: '`<article>` representa una composición autónoma y distributible de forma independiente (ej. noticia, post, tarjeta de producto).'
     },
     {
       id: 'html-10',
       topic: 'HTML',
-      question: '¿Cuál es la función del meta tag `<meta name="viewport" content="width=device-width, initial-scale=1.0">`?',
+      question: '¿Cuál es el propósito fundamental del meta tag `<meta name="viewport" content="width=device-width, initial-scale=1.0">`?',
       options: [
-        'Deshabilitar el zoom en dispositivos táctiles.',
-        'Instruir al navegador para que ajuste el ancho de la ventana gráfica al ancho del dispositivo y establezca la escala inicial 1:1, permitiendo el responsive design.',
-        'Forzar la resolución de pantalla a 1920x1080.',
-        'Mejorar la velocidad de renderizado de fuentes web.'
+        'Bloquear la capacidad de hacer zoom en dispositivos móviles.',
+        'Establecer que el ancho de la ventana gráfica coincida con el ancho del dispositivo para permitir el diseño adaptable (Responsive Design).',
+        'Forzar a los teléfonos móviles a mostrar la página en resolución de escritorio a 1920px.',
+        'Acelerar la carga de fuentes web almacenándolas en la memoria caché.'
       ],
       correctAnswer: 1,
       explanation: 'Es esencial para el diseño adaptable (Responsive Web Design), estableciendo las dimensiones del viewport móvil.'
@@ -324,7 +325,7 @@ const QUESTION_BANK = {
     {
       id: 'html-11',
       topic: 'HTML',
-      question: '¿Qué elemento semántico HTML5 representa contenido que solo está indirectamente relacionado con el contenido principal (como barras laterales, glosarios o publicidad)?',
+      question: '¿Qué etiqueta semántica representa contenido secundario o tangencialmente relacionado con el contenido principal (como una barra lateral o publicidad)?',
       options: [
         '`<sidebar>`',
         '`<aside>`',
@@ -337,11 +338,11 @@ const QUESTION_BANK = {
     {
       id: 'html-12',
       topic: 'HTML',
-      question: '¿Qué atributo de formulario HTML5 permite validar que un campo de texto cumpla con una expresión regular específica antes del envío?',
+      question: '¿Qué atributo de formulario HTML5 permite validar un campo de texto mediante una expresión regular antes de enviarlo?',
       options: [
         '`validate="regex"`',
-        '`pattern="regex"`',
-        '`regex="expression"`',
+        '`pattern="expresion_regular"`',
+        '`regex="expresion"`',
         '`format="rule"`'
       ],
       correctAnswer: 1,
@@ -350,14 +351,14 @@ const QUESTION_BANK = {
     {
       id: 'html-13',
       topic: 'HTML',
-      question: '¿Qué elemento permite especificar múltiples fuentes de medios según la resolución o formato (ej. WebP, AVIF) para una imagen responsive?',
+      question: '¿Qué elemento HTML5 permite especificar múltiples alternativas de una imagen adaptadas a diferentes resoluciones o formatos modernos (ej. WebP/AVIF)?',
       options: [
-        '`<picture>` que contiene elementos `<source>` y una etiqueta de respaldo `<img>`',
-        '`<canvas>` con directivas `srcset`',
+        '`<canvas>` con atributo `srcset`',
+        '`<picture>` conteniendo elementos `<source>` y una etiqueta de respaldo `<img>`',
         '`<figure>` con atributos `media-query`',
         '`<responsive-img>`'
       ],
-      correctAnswer: 0,
+      correctAnswer: 1,
       explanation: 'El elemento `<picture>` permite servir diferentes imágenes optimizadas en base a media queries o formatos soportados.'
     }
   ],
@@ -366,25 +367,25 @@ const QUESTION_BANK = {
     {
       id: 'css-1',
       topic: 'CSS',
-      question: 'En CSS Grid, ¿qué valor de `grid-template-columns` crea un grid responsivo automático donde las columnas tienen al menos 280px y se expanden equitativamente sin necesidad de media queries?',
+      question: 'En CSS Grid, ¿qué regla de `grid-template-columns` crea un layout responsivo donde las columnas tienen al menos 280px de ancho y se adaptan automáticamente sin media queries?',
       options: [
-        '`repeat(auto-fit, minmax(280px, 1fr))`',
         '`repeat(auto, 280px 1fr)`',
+        '`repeat(auto-fit, minmax(280px, 1fr))`',
         '`flex: 1 1 280px`',
         '`grid-columns: responsive 280px`'
       ],
-      correctAnswer: 0,
+      correctAnswer: 1,
       explanation: '`repeat(auto-fit, minmax(280px, 1fr))` calcula dinámicamente cuántas columnas de al menos 280px caben y las expande equitativamente con `1fr`.'
     },
     {
       id: 'css-2',
       topic: 'CSS',
-      question: '¿Cuál es el cálculo de especificidad correcto para el selector `header.nav-bar ul li a:hover`?',
+      question: '¿Cuál es el cálculo exacto de especificidad en CSS para el selector `header.nav-bar ul li a:hover`?',
       options: [
-        '(0, 1, 4) - 0 IDs, 1 Clase, 4 Elementos/Pseudoclases',
-        '(0, 2, 4) - 0 IDs, 2 Clases/Pseudoclases (`.nav-bar`, `:hover`), 4 Elementos (`header`, `ul`, `li`, `a`)',
+        '(0, 1, 4) - 0 IDs, 1 Clase, 4 Elementos',
+        '(0, 2, 4) - 0 IDs, 2 Clases/Pseudoclases (`.nav-bar`, `:hover`) y 4 Elementos (`header`, `ul`, `li`, `a`)',
         '(1, 1, 4) - 1 ID, 1 Clase, 4 Elementos',
-        '(0, 0, 6) - 6 selectores simples'
+        '(0, 0, 6) - 6 selectores de tipo elemento'
       ],
       correctAnswer: 1,
       explanation: 'Contiene 0 IDs, 2 clases/pseudoclases (`.nav-bar` y `:hover`), y 4 elementos HTML (`header`, `ul`, `li`, `a`), resultando en (0, 2, 4).'
@@ -392,20 +393,20 @@ const QUESTION_BANK = {
     {
       id: 'css-3',
       topic: 'CSS',
-      question: '¿Qué propiedad CSS cambia el modelo de caja para que el `padding` y el `border` se incluyan dentro del `width` y `height` declarados?',
+      question: '¿Qué propiedad CSS modifica el modelo de caja para incluir el `padding` y el `border` dentro del `width` y `height` declarados del elemento?',
       options: [
-        '`box-sizing: border-box;`',
         '`box-sizing: content-box;`',
+        '`box-sizing: border-box;`',
         '`box-model: inner-border;`',
         '`display: flow-root;`'
       ],
-      correctAnswer: 0,
+      correctAnswer: 1,
       explanation: '`box-sizing: border-box` calcula el ancho y alto total incluyendo el padding y los bordes, facilitando el cálculo exacto de layouts.'
     },
     {
       id: 'css-4',
       topic: 'CSS',
-      question: '¿Qué valor de la propiedad `position` hace que un elemento se desplace con el scroll del usuario hasta alcanzar un umbral y luego quede fijo en la pantalla?',
+      question: '¿Qué valor de la propiedad `position` permite que un elemento acompañe el desplazamiento del scroll hasta un umbral fijado y luego permanezca fijo?',
       options: [
         '`position: fixed;`',
         '`position: sticky;`',
@@ -418,7 +419,7 @@ const QUESTION_BANK = {
     {
       id: 'css-5',
       topic: 'CSS',
-      question: '¿Cómo se declara y consume correctamente una Variable CSS (Custom Property)?',
+      question: '¿Cómo se declara y consume de forma correcta una Variable CSS nativa (Custom Property)?',
       options: [
         'Declaración: `$primary-color: #3525cd;` | Uso: `color: $primary-color;`',
         'Declaración: `--primary-color: #3525cd;` | Uso: `color: var(--primary-color);`',
@@ -431,12 +432,12 @@ const QUESTION_BANK = {
     {
       id: 'css-6',
       topic: 'CSS',
-      question: '¿Cuál es la función del pseudo-elemento `::backdrop` en CSS moderno?',
+      question: '¿Cuál es la función del pseudo-elemento CSS `::backdrop`?',
       options: [
-        'Generar un fondo borroso para cualquier contenedor con `backdrop-filter`.',
-        'Estilar el fondo oscuro o difuminado que se sitúa detrás de un `<dialog>` abierto con `.showModal()` o en elementos en pantalla completa.',
-        'Crear una capa de marca de agua en páginas impresas.',
-        'Servir de reemplazo para `::before` y `::after`.'
+        'Aplicar un desenfoque de fondo a cualquier elemento mediante `backdrop-filter`.',
+        'Estilar la capa de fondo oscura o difuminada que se renderiza detrás de un elemento `<dialog>` modal o elementos en modo pantalla completa.',
+        'Insertar una marca de agua en documentos impresos.',
+        'Reemplazar los pseudo-elementos `::before` y `::after`.'
       ],
       correctAnswer: 1,
       explanation: '`::backdrop` es una caja de pantalla completa que se renderiza inmediatamente detrás de elementos en la Top Layer (como `<dialog>` modal).'
@@ -444,7 +445,7 @@ const QUESTION_BANK = {
     {
       id: 'css-7',
       topic: 'CSS',
-      question: '¿Qué propiedad CSS moderna permite evitar el colapso de márgenes creando un nuevo contexto de formato de bloque (BFC) de manera limpia?',
+      question: '¿Qué valor de `display` crea un nuevo Contexto de Formato de Bloque (BFC) para evitar el colapso de márgenes sin recortar el contenido desbordado?',
       options: [
         '`overflow: hidden;`',
         '`display: flow-root;`',
@@ -457,12 +458,12 @@ const QUESTION_BANK = {
     {
       id: 'css-8',
       topic: 'CSS',
-      question: '¿Cuál es el efecto de la propiedad `clamp(1rem, 2.5vw, 2.5rem)` aplicada a `font-size`?',
+      question: '¿Qué efecto produce aplicar `font-size: clamp(1rem, 2.5vw, 2.5rem)` a un elemento de texto?',
       options: [
-        'Establece un tamaño fijo de 2.5vw con un margen de 1rem.',
-        'Ajusta de forma fluida el tamaño entre un mínimo de 1rem, un valor preferido del 2.5% del ancho de la ventana (vw) y un límite máximo de 2.5rem.',
-        'Corta el texto si supera 2.5 líneas de altura.',
-        'Aplica una animación de escala continua.'
+        'Establece un tamaño fijo de 2.5vw independientemente del ancho de pantalla.',
+        'Ajusta de forma fluida el tamaño del texto entre un mínimo de 1rem, un valor preferido de 2.5vw y un límite máximo de 2.5rem.',
+        'Recorta el texto si supera 2.5 líneas de alto en la pantalla.',
+        'Aplica una animación de zoom progresivo al texto.'
       ],
       correctAnswer: 1,
       explanation: '`clamp(MIN, VAL, MAX)` restringe un valor entre un límite inferior y un límite superior según una expresión flexible calculada.'
@@ -470,7 +471,7 @@ const QUESTION_BANK = {
     {
       id: 'css-9',
       topic: 'CSS',
-      question: '¿Qué pseudo-clase permite seleccionar un elemento padre en función de si contiene determinados hijos o estados (el selector de padre de CSS)?',
+      question: '¿Qué pseudo-clase relacional de CSS permite seleccionar un elemento en función de las características o elementos contenidos dentro de él?',
       options: [
         '`:parent()`',
         '`:has()`',
@@ -483,25 +484,25 @@ const QUESTION_BANK = {
     {
       id: 'css-10',
       topic: 'CSS',
-      question: '¿Qué propiedad de Flexbox define el tamaño base de un item antes de que se distribuya el espacio restante con `flex-grow` o `flex-shrink`?',
+      question: '¿Qué propiedad de Flexbox establece la dimensión inicial del eje principal de un elemento antes de que se distribuya el espacio libre restante?',
       options: [
-        '`flex-basis`',
         '`flex-start`',
+        '`flex-basis`',
         '`align-self`',
         '`order`'
       ],
-      correctAnswer: 0,
+      correctAnswer: 1,
       explanation: '`flex-basis` especifica el tamaño inicial en el eje principal antes de que actúen el crecimiento (`flex-grow`) o la contracción (`flex-shrink`).'
     },
     {
       id: 'css-11',
       topic: 'CSS',
-      question: '¿Cuál es la función de `will-change` en CSS y cuándo debe utilizarse con precaución?',
+      question: '¿Cuál es el propósito principal de la propiedad `will-change` en CSS?',
       options: [
-        'Obliga al navegador a recargar la página cuando cambian las variables CSS.',
-        'Informa al navegador con antelación qué propiedades van a animarse para que prepare optimizaciones de render en GPU (creando capas de composición), debiendo usarse solo en elementos críticos.',
-        'Aplica estilos condicionales basados en el hardware del usuario.',
-        'Es un sustituto deprecado de `@keyframes`.'
+        'Forzar a la página a volver a cargar la hoja de estilos al cambiar una variable CSS.',
+        'Informar al navegador de forma anticipada qué propiedades van a animarse para promover el elemento a una capa de composición en la GPU.',
+        'Aplicar reglas de estilo condicionales según el rendimiento de la CPU del usuario.',
+        'Es una directiva obsoleta de reemplazo para `@keyframes`.'
       ],
       correctAnswer: 1,
       explanation: '`will-change` previene tirones (jank) al promover elementos a su propia capa de GPU, pero un uso excesivo consume demasiada memoria de video.'
@@ -509,39 +510,39 @@ const QUESTION_BANK = {
     {
       id: 'css-12',
       topic: 'CSS',
-      question: '¿Qué función de gradiente permite crear fondos cónicos utilizados típicamente para gráficos circulares y paletas cromáticas?',
+      question: '¿Qué función de gradiente en CSS permite crear degradados cónicos alrededor de un punto central?',
       options: [
         '`radial-gradient()`',
-        '`linear-gradient()`',
         '`conic-gradient()`',
+        '`linear-gradient()`',
         '`mesh-gradient()`'
       ],
-      correctAnswer: 2,
+      correctAnswer: 1,
       explanation: '`conic-gradient()` rota las transiciones de color alrededor de un punto central como los rayos de un reloj.'
     },
     {
       id: 'css-13',
       topic: 'CSS',
-      question: '¿Qué diferencia a `:where()` de `:is()` al evaluar la especificidad de las reglas CSS?',
+      question: '¿Qué diferencia principal existe entre las pseudo-clases `:where()` e `:is()` al calcular la especificidad?',
       options: [
-        '`:where()` siempre tiene especificidad 0 (cero), facilitando sobreescribir estilos, mientras que `:is()` adopta la especificidad del selector más específico de su lista.',
-        '`:where()` solo acepta clases y `:is()` solo acepta tags HTML.',
-        '`:is()` no es soportado en navegadores modernos.',
-        'Son completamente idénticos sin ninguna diferencia en cascada.'
+        '`:is()` no es compatible con los navegadores web modernos.',
+        '`:where()` reduce la especificidad a (0,0,0) facilitando la sobreescritura, mientras que `:is()` adopta la especificidad del selector más específico de su lista.',
+        '`:where()` solo acepta clases CSS e `:is()` solo acepta etiquetas HTML.',
+        'Ambas pseudo-clases tienen la misma especificidad fija de 1 ID.'
       ],
-      correctAnswer: 0,
+      correctAnswer: 1,
       explanation: '`:where()` reduce la especificidad a (0,0,0) independientemente de los selectores incluidos en sus argumentos.'
     }
   ]
 };
 
-// Datos completos de los 6 Cursos requeridos por la consigna
+// Datos completos de los 3 Cursos Frontend disponibles (JavaScript, HTML y CSS)
 const COURSES_DATA = [
   {
     id: 'javascript',
     title: 'JavaScript Moderno & ESNext',
     shortDesc: 'Domina closures, promesas, event loop, arquitectura de módulos y patrones avanzados de programación funcional y reactiva.',
-    category: 'Lenguajes',
+    category: 'JavaScript',
     level: 'Avanzado',
     duration: '12 Semanas',
     rating: '4.9 (1.8k)',
@@ -563,7 +564,7 @@ const COURSES_DATA = [
     id: 'html',
     title: 'HTML5 & Accesibilidad Web (a11y)',
     shortDesc: 'Aprende semántica estricta, arquitectura SEO técnica, estándares W3C, WAI-ARIA y optimización para lectores de pantalla.',
-    category: 'Estructura',
+    category: 'HTML',
     level: 'Todos los niveles',
     duration: '8 Semanas',
     rating: '4.9 (950)',
@@ -585,7 +586,7 @@ const COURSES_DATA = [
     id: 'css',
     title: 'CSS Avanzado, Grid & Design Systems',
     shortDesc: 'Construye sistemas de diseño escalables con CSS Grid, Flexbox, Custom Properties, container queries y micro-animaciones.',
-    category: 'Estilos',
+    category: 'CSS',
     level: 'Intermedio / Avanzado',
     duration: '10 Semanas',
     rating: '4.8 (1.4k)',
@@ -601,72 +602,6 @@ const COURSES_DATA = [
       'Selectores modernos: :has(), :is(), :where() y Container Queries',
       'Animaciones y Transiciones de 60fps con aceleración GPU',
       'Metodologías BEM, CSS Modules y Arquitectura ITCSS'
-    ]
-  },
-  {
-    id: 'sql',
-    title: 'Bases de Datos SQL para Frontend Devs',
-    shortDesc: 'Comprende el modelado relacional, consultas complejas con PostgreSQL/MySQL, índices de rendimiento e integración con ORMs.',
-    category: 'Backend & Data',
-    level: 'Intermedio',
-    duration: '9 Semanas',
-    rating: '4.8 (820)',
-    students: '6,300+',
-    icon: 'database',
-    accent: 'primary',
-    badge: 'Fullstack Ready',
-    colorHex: '#336791',
-    hasExam: false,
-    modules: [
-      'Modelado de datos relacionales y normalización (1NF, 2NF, 3NF)',
-      'Consultas complejas: JOINs, Subqueries, Agregaciones y Window Functions',
-      'Diseño de esquemas en PostgreSQL y MySQL',
-      'Indexación y optimización de planes de ejecución EXPLAIN',
-      'Integración con ORMs modernos (Prisma, Drizzle) y Supabase'
-    ]
-  },
-  {
-    id: 'nosql',
-    title: 'Bases de Datos NoSQL & Document Stores',
-    shortDesc: 'Aprende MongoDB, Redis, bases de datos clave-valor y orientadas a documentos para aplicaciones de alta concurrencia en tiempo real.',
-    category: 'Backend & Data',
-    level: 'Intermedio',
-    duration: '8 Semanas',
-    rating: '4.7 (670)',
-    students: '5,100+',
-    icon: 'storage',
-    accent: 'secondary',
-    badge: 'Alta Demanda',
-    colorHex: '#47a248',
-    hasExam: false,
-    modules: [
-      'Modelado de documentos en MongoDB y Atlas',
-      'Estrategias de Embedding vs Referencing en NoSQL',
-      'Caché de ultra-baja latencia y pub/sub con Redis',
-      'Bases de datos Vectoriales y NoSQL en la Nube (Firestore/DynamoDB)',
-      'Patrones de consistencia eventual y escalabilidad horizontal'
-    ]
-  },
-  {
-    id: 'agile',
-    title: 'Metodologías Ágiles & DevOps Frontend',
-    shortDesc: 'Aplica Scrum, Kanban, User Stories, estimación ágil, integración continua CI/CD y cultura de feedback para equipos de alto rendimiento.',
-    category: 'Gestión & Metodología',
-    level: 'Todos los niveles',
-    duration: '6 Semanas',
-    rating: '4.9 (1.1k)',
-    students: '9,800+',
-    icon: 'groups',
-    accent: 'tertiary',
-    badge: 'Habilidad Clave',
-    colorHex: '#0052cc',
-    hasExam: false,
-    modules: [
-      'Framework Scrum en desarrollo ágil de software',
-      'Tableros Kanban, métricas de flujo (Lead Time, Cycle Time)',
-      'Escritura de Historias de Usuario y Criterios de Aceptación (Gherkin)',
-      'Planificación de Sprints, Retrospectivas efectivas y Poker Planning',
-      'Integración Continua (CI/CD) y Git Flow para equipos Frontend'
     ]
   }
 ];
