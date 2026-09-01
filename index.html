@@ -171,15 +171,13 @@
 
         <!-- Filtros de Categoría -->
         <div class="courses-filter-tabs">
-          <button class="filter-tab active" data-filter="todos">Todos los Cursos (6)</button>
-          <button class="filter-tab" data-filter="Lenguajes">Lenguajes</button>
-          <button class="filter-tab" data-filter="Estructura">Estructura & a11y</button>
-          <button class="filter-tab" data-filter="Estilos">Estilos & CSS</button>
-          <button class="filter-tab" data-filter="Data">Bases de Datos</button>
-          <button class="filter-tab" data-filter="Gestión">Metodologías Ágiles</button>
+          <button class="filter-tab active" data-filter="todos">Todos los Cursos (3)</button>
+          <button class="filter-tab" data-filter="JavaScript">JavaScript</button>
+          <button class="filter-tab" data-filter="HTML">HTML5 & a11y</button>
+          <button class="filter-tab" data-filter="CSS">CSS3 & Grid</button>
         </div>
 
-        <!-- Grid de los 6 Cursos -->
+        <!-- Grid de los 3 Cursos Frontend -->
         <div class="courses-grid" id="courses-grid-container">
           <!-- Generado dinámicamente por JavaScript -->
         </div>
@@ -325,7 +323,7 @@
         <div>
           <div class="badge-pill">PROGRAMAS ACADÉMICOS</div>
           <h1 class="section-title">Catálogo Completo de Cursos</h1>
-          <p class="section-subtitle">Descubre nuestros 6 programas especializados diseñados para llevar tu perfil técnico al siguiente nivel.</p>
+          <p class="section-subtitle">Descubre nuestros 3 programas especializados en HTML, CSS y JavaScript diseñados para llevar tu perfil técnico al siguiente nivel.</p>
         </div>
       </div>
 
@@ -512,7 +510,7 @@
                 </div>
 
                 <div class="trajectory-footer-meta">
-                  <span>Aprobación mín: <strong>80%</strong></span>
+                  <span>Aprobación mín: <strong>60% (6/10)</strong></span>
                   <span id="trajectory-status-indicator" style="color:var(--success); font-weight:700;">En Camino</span>
                 </div>
               </div>
@@ -532,7 +530,7 @@
                 <div class="cert-placeholder-box">
                   <span class="material-symbols-outlined" style="font-size:36px; color:var(--accent-primary); margin-bottom:4px;">workspace_premium</span>
                   <div class="cert-title">Especialista Frontend</div>
-                  <div class="cert-sub">Completa el examen con +80% para desbloquear y descargar tu certificado</div>
+                  <div class="cert-sub">Responde mín. 6/10 (60%) para desbloquear y descargar tu certificado oficial</div>
                 </div>
 
                 <button class="btn btn-outline btn-sm" id="download-sample-reward-btn" style="width:100%;">
@@ -560,26 +558,8 @@
         </div>
       </div>
 
-      <div class="cert-customizer-form">
-        <div class="form-group">
-          <label for="cert-standalone-name-input">Nombre Completo para el Certificado:</label>
-          <input type="text" class="form-input" id="cert-standalone-name-input" value="Alex Rivera" placeholder="Ingresa tu nombre y apellido" />
-        </div>
-        <div style="display:flex; gap:10px;">
-          <button class="btn btn-primary" id="btn-standalone-png" style="flex:1;">
-            <span class="material-symbols-outlined">image</span>
-            Descargar PNG
-          </button>
-          <button class="btn btn-outline" id="btn-standalone-jpg" style="flex:1;">
-            <span class="material-symbols-outlined">download</span>
-            Descargar JPG
-          </button>
-        </div>
-      </div>
-
-      <!-- Canvas de Certificado -->
-      <div class="canvas-preview-wrapper">
-        <canvas id="standalone-cert-canvas"></canvas>
+      <div id="cert-standalone-container">
+        <!-- Generado dinámicamente según si el usuario rindió y aprobó el examen con >= 6/10 -->
       </div>
     </div>
   </section>
@@ -682,46 +662,8 @@
   <script src="js/certificate.js"></script>
   <script src="js/app.js"></script>
   <script>
-    // Inicialización del canvas en vista independiente de certificados
     document.addEventListener('DOMContentLoaded', () => {
-      const standaloneCanvas = document.getElementById('standalone-cert-canvas');
-      const standaloneInput = document.getElementById('cert-standalone-name-input');
-      
-      const redrawStandalone = () => {
-        if (standaloneCanvas) {
-          CertificateEngine.drawCertificate(standaloneCanvas, {
-            studentName: standaloneInput ? standaloneInput.value.trim() || 'Frontend Developer' : 'Alex Rivera',
-            technology: 'JavaScript Moderno & Arquitectura Frontend',
-            score: 98,
-            credentialId: 'FA-894120'
-          });
-        }
-      };
-
-      if (standaloneCanvas) {
-        redrawStandalone();
-        if (standaloneInput) {
-          standaloneInput.addEventListener('input', redrawStandalone);
-        }
-      }
-
-      const btnStandalonePng = document.getElementById('btn-standalone-png');
-      if (btnStandalonePng && standaloneCanvas) {
-        btnStandalonePng.addEventListener('click', () => {
-          const name = standaloneInput ? standaloneInput.value.trim().replace(/\s+/g, '_') : 'Alex_Rivera';
-          CertificateEngine.downloadPNG(standaloneCanvas, `Certificado_Frontend_Academy_${name}.png`);
-        });
-      }
-
-      const btnStandaloneJpg = document.getElementById('btn-standalone-jpg');
-      if (btnStandaloneJpg && standaloneCanvas) {
-        btnStandaloneJpg.addEventListener('click', () => {
-          const name = standaloneInput ? standaloneInput.value.trim().replace(/\s+/g, '_') : 'Alex_Rivera';
-          CertificateEngine.downloadJPG(standaloneCanvas, `Certificado_Frontend_Academy_${name}.jpg`);
-        });
-      }
-
-      // Renderizar también en la vista #view-cursos
+      // Renderizar grid en la vista #view-cursos
       const allCoursesViewGrid = document.getElementById('all-courses-grid-view');
       if (allCoursesViewGrid && typeof COURSES_DATA !== 'undefined') {
         allCoursesViewGrid.innerHTML = COURSES_DATA.map(course => `
